@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -909,7 +910,7 @@ body {
       <!-- CHAPTERS SIDE PANEL -->
       <div id="chapters-panel" style="display:none;width:260px;min-width:260px;background:#f0e8d8;border-right:1px solid rgba(90,60,20,0.15);overflow-y:auto;flex-shrink:0;">
         <div style="padding:14px 16px;background:#1a2744;color:#e8b84b;font-family:'EB Garamond',serif;font-size:13px;letter-spacing:0.5px;font-weight:600;">
-          📋 ${currentLang==='zh'?'章節目錄':'Chapters'}
+          📋 章節目錄 · Chapters
         </div>
         <div id="chapters-list" style="padding:8px 0;"></div>
       </div>
@@ -1842,16 +1843,18 @@ function updateChaptersPanel() {
   }
   list.innerHTML = entries.map(([pageIdx, title]) => {
     const isActive = parseInt(pageIdx) === currentPageIndex;
+    const bg = isActive ? '#f5e8c0' : 'transparent';
+    const border = isActive ? '#c8960c' : 'transparent';
+    const color = isActive ? '#1a2744' : '#4a3520';
     return `<div onclick="jumpToPage(${pageIdx})"
-      style="padding:9px 14px;font-size:12px;cursor:pointer;border-left:3px solid ${isActive?'#c8960c':'transparent'};
-      background:${isActive?'#f5e8c0':'transparent'};color:${isActive?'#1a2744':'#4a3520'};
-      font-family:'EB Garamond',serif;line-height:1.4;transition:all 0.15s;"
+      style="padding:9px 14px;font-size:12px;cursor:pointer;border-left:3px solid ${border};background:${bg};color:${color};font-family:'EB Garamond',serif;line-height:1.4;transition:all 0.15s;"
       onmouseover="this.style.background='#f5e8c0';this.style.borderLeftColor='#c8960c'"
-      onmouseout="this.style.background='${isActive?'#f5e8c0':'transparent'}';this.style.borderLeftColor='${isActive?'#c8960c':'transparent'}'">
+      onmouseout="this.style.background='${bg}';this.style.borderLeftColor='${border}'">
       ${title}
     </div>`;
   }).join('');
 }
+function toggleList() {
   if (!currentBook) return;
   const inList = readingList.some(b=>b.id===currentBook.id);
   if (inList) readingList = readingList.filter(b=>b.id!==currentBook.id);
