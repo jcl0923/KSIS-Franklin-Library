@@ -338,7 +338,7 @@ body {
   font-size:11px; background:rgba(0,0,0,0.3);
   color:#fff; padding:2px 7px; border-radius:10px;
 }
-.book-meta { padding:10px 12px; flex:1; }
+.book-meta { padding:10px 12px; flex:1; display:flex; flex-direction:column; }
 .book-title {
   font-size:12px; font-weight:700; color:#1a1208;
   margin-bottom:3px; line-height:1.4;
@@ -346,7 +346,7 @@ body {
 }
 .book-author { font-size:11px; color:#7a6550; font-style:italic; }
 .book-badge {
-  display:inline-block; margin-top:5px;
+  display:inline-block; margin-top:auto; align-self:flex-start;
   padding:2px 7px; font-size:10px; border-radius:10px;
   background:#f5e8c0; color:#5c3d1e; font-style:normal;
 }
@@ -478,7 +478,7 @@ body {
   font-family:'EB Garamond',serif;
   color:var(--text-muted); gap:10px; font-size:15px;
 }
-.in-reader-scroll { overflow-y:auto; }
+.in-reader-scroll { overflow-y:auto; scroll-behavior: smooth; }
 .reader-spinner {
   width:40px; height:40px;
   border:3px solid var(--border);
@@ -514,6 +514,9 @@ body {
   font-family:'EB Garamond','Noto Serif TC',serif;
   font-size:24px; color:var(--navy); margin-bottom:6px; text-indent:0;
 }
+
+/* TOC Items Styling */
+.toc-item:hover { background: var(--cream-dark) !important; border-color: var(--gold) !important; transform: translateX(4px); }
 
 /* Watermark */
 .reader-watermark {
@@ -620,6 +623,7 @@ body {
   .book-grid { grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); }
   .modal-book-info { flex-direction:column; }
   .site-nav { overflow-x:auto; }
+  #chapters-panel { display: none !important; } /* Hide side panel on mobile, let them use TOC page */
 }
 </style>
 </head>
@@ -919,7 +923,7 @@ body {
       <!-- LOADING -->
       <div id="reader-state-loading" class="reader-state" style="display:block;">
         <div class="reader-spinner"></div>
-        <p>正在從崑山圖書館資料庫載入書籍…</p>
+        <p>正在從圖書館資料庫載入書籍…</p>
         <p style="font-size:12px;color:var(--text-muted);">Loading book from Franklin Library database…</p>
       </div>
 
@@ -1107,7 +1111,7 @@ const BOOKS = [
   {id:118,title:"大學·中庸",author:"曾子/子思（傳）",cat:"philosophy",year:-200,lang:"ZH",url:"https://zh.wikisource.org/wiki/禮記",desc:"四書之二，論述修身、齊家、治國、平天下的儒家思想。",grade:"9-12"},
   {id:119,title:"莊子（選篇）",author:"莊周",cat:"philosophy",year:-300,lang:"ZH",url:"https://zh.wikisource.org/wiki/莊子",desc:"道家哲學的重要典籍，文筆優美、想像奇特。",grade:"9-12"},
   {id:120,title:"韓非子（選篇）",author:"韓非",cat:"philosophy",year:-230,lang:"ZH",url:"https://zh.wikisource.org/wiki/韓非子",desc:"法家代表作，論述政治統治的權術與法治。",grade:"10-12"},
-  // ── MORE ENGLISH BOOKS (to reach 1200+ via sources) ──
+  // ── MORE ENGLISH BOOKS ──
   {id:121,title:"Silas Marner",author:"George Eliot",cat:"classic",year:1861,lang:"EN",url:"https://www.gutenberg.org/ebooks/550",desc:"A miserly weaver is transformed by adopting an orphan girl.",grade:"9-12"},
   {id:122,title:"Middlemarch",author:"George Eliot",cat:"classic",year:1871,lang:"EN",url:"https://www.gutenberg.org/ebooks/145",desc:"Life in a Midlands town through the stories of interconnected characters.",grade:"11-12"},
   {id:123,title:"Tess of the d'Urbervilles",author:"Thomas Hardy",cat:"classic",year:1891,lang:"EN",url:"https://www.gutenberg.org/ebooks/110",desc:"A country girl's tragic fall from innocence in Victorian England.",grade:"10-12"},
@@ -1137,110 +1141,12 @@ const BOOKS = [
   {id:147,title:"Lord Jim",author:"Joseph Conrad",cat:"literature",year:1900,lang:"EN",url:"https://www.gutenberg.org/ebooks/5658",desc:"A young officer lives with the shame of abandoning a sinking ship.",grade:"10-12"},
   {id:148,title:"Heart of Darkness",author:"Joseph Conrad",cat:"literature",year:1899,lang:"EN",url:"https://www.gutenberg.org/ebooks/219",desc:"Marlow journeys into the Belgian Congo to find the mysterious Kurtz.",grade:"10-12"},
   {id:149,title:"The Nigger of the 'Narcissus'",author:"Joseph Conrad",cat:"literature",year:1897,lang:"EN",url:"https://www.gutenberg.org/ebooks/17731",desc:"The story of a voyage on a sailing ship and its complex crew dynamics.",grade:"10-12"},
-  {id:150,title:"Tono-Bungay",author:"H.G. Wells",cat:"literature",year:1909,lang:"EN",url:"https://www.gutenberg.org/ebooks/718",desc:"A satire of Edwardian England through the rise of a quack medicine.",grade:"10-12"},
-];
-
-// Generate more books to represent the full 1200+ (from Gutenberg catalog)
-const MORE_BOOKS_EN = [
-  ["The Return of the Native","Thomas Hardy","classic",1878],
-  ["Two Years Before the Mast","Richard Henry Dana","adventure",1840],
-  ["Billy Budd, Sailor","Herman Melville","classic",1924],
-  ["Bartleby, the Scrivener","Herman Melville","literature",1853],
-  ["The Red Room","H.G. Wells","mystery",1894],
-  ["Pudd'nhead Wilson","Mark Twain","classic",1894],
-  ["The Gilded Age","Mark Twain","classic",1873],
-  ["The Prince and the Pauper","Mark Twain","adventure",1881],
-  ["Life on the Mississippi","Mark Twain","biography",1883],
-  ["Roughing It","Mark Twain","adventure",1872],
-  ["The Innocents Abroad","Mark Twain","adventure",1869],
-  ["Following the Equator","Mark Twain","adventure",1897],
-  ["Ben-Hur: A Tale of the Christ","Lew Wallace","history",1880],
-  ["Uncle Tom's Cabin","Harriet Beecher Stowe","history",1852],
-  ["The Deerslayer","James Fenimore Cooper","adventure",1841],
-  ["The Pathfinder","James Fenimore Cooper","adventure",1840],
-  ["The Pioneers","James Fenimore Cooper","adventure",1823],
-  ["The Prairie","James Fenimore Cooper","adventure",1827],
-  ["Washington Square","Henry James","classic",1880],
-  ["The Turn of the Screw","Henry James","mystery",1898],
-  ["The Portrait of a Lady","Henry James","classic",1881],
-  ["The Aspern Papers","Henry James","literature",1888],
-  ["The Bostonians","Henry James","literature",1886],
-  ["Daisy Miller","Henry James","literature",1878],
-  ["An American","Henry James","literature",1877],
-  ["O Pioneers!","Willa Cather","literature",1913],
-  ["My Ántonia","Willa Cather","literature",1918],
-  ["The Song of the Lark","Willa Cather","literature",1915],
-  ["Death Comes for the Archbishop","Willa Cather","literature",1927],
-  ["Sister Carrie","Theodore Dreiser","classic",1900],
-  ["The Financier","Theodore Dreiser","classic",1912],
-  ["The Octopus","Frank Norris","literature",1901],
-  ["McTeague","Frank Norris","classic",1899],
-  ["The Iron Heel","Jack London","science",1908],
-  ["Martin Eden","Jack London","literature",1909],
-  ["The Sea-Wolf","Jack London","adventure",1904],
-  ["Burning Daylight","Jack London","adventure",1910],
-  ["The House of the Wolf","Stanley Waterloo","adventure",1884],
-  ["Captain Blood","Rafael Sabatini","adventure",1922],
-  ["Scaramouche","Rafael Sabatini","adventure",1921],
-  ["The Mark of Zorro","Johnston McCulley","adventure",1919],
-  ["Tarzan of the Apes","Edgar Rice Burroughs","adventure",1912],
-  ["A Princess of Mars","Edgar Rice Burroughs","fantasy",1912],
-  ["The Lost World","Arthur Conan Doyle","adventure",1912],
-  ["The Poison Belt","Arthur Conan Doyle","science",1913],
-  ["The Valley of Fear","Arthur Conan Doyle","mystery",1914],
-  ["His Last Bow","Arthur Conan Doyle","mystery",1917],
-  ["The Return of Sherlock Holmes","Arthur Conan Doyle","mystery",1905],
-  ["The Memoirs of Sherlock Holmes","Arthur Conan Doyle","mystery",1893],
-  ["The Red House Mystery","A.A. Milne","mystery",1922],
-  ["And Then There Were None","Agatha Christie","mystery",1939],
-];
-
-const MORE_BOOKS_ZH = [
-  ["呂氏春秋（選篇）","呂不韋","philosophy",-239],
-  ["戰國策（選篇）","劉向（編）","history",-400],
-  ["左傳（選篇）","左丘明","history",-400],
-  ["國語（選篇）","左丘明","history",-500],
-  ["墨子（選篇）","墨翟","philosophy",-400],
-  ["荀子（選篇）","荀況","philosophy",-200],
-  ["管子（選篇）","管仲（傳）","philosophy",-600],
-  ["晏子春秋（選篇）","晏嬰（傳）","history",-500],
-  ["列子（選篇）","列禦寇","philosophy",-300],
-  ["淮南子（選篇）","劉安","philosophy",-130],
-  ["世說新語（選篇）","劉義慶","literature",420],
-  ["搜神記（選篇）","干寶","fantasy",350],
-  ["封神演義（節選）","許仲琳","fantasy",1567],
-  ["鏡花緣（節選）","李汝珍","fantasy",1827],
-  ["老殘遊記（節選）","劉鶚","literature",1903],
-  ["二十年目睹之怪現狀（節選）","吳趼人","literature",1903],
-  ["官場現形記（節選）","李寶嘉","literature",1903],
-  ["孽海花（節選）","曾樸","literature",1905],
-  ["新中國未來記","梁啟超","science",1902],
-  ["飲冰室詩話（選篇）","梁啟超","literature",1902],
+  {id:150,title:"Tono-Bungay",author:"H.G. Wells",cat:"literature",year:1909,lang:"EN",url:"https://www.gutenberg.org/ebooks/718",desc:"A satire of Edwardian England through the rise of a quack medicine.",grade:"10-12"}
 ];
 
 let allBooks = [...BOOKS];
 
-// Add more English books
-MORE_BOOKS_EN.forEach((b,i) => {
-  allBooks.push({
-    id: 200+i, title:b[0], author:b[1], cat:b[2], year:b[3], lang:"EN",
-    url:`https://www.gutenberg.org/ebooks/search/?query=${encodeURIComponent(b[0])}`,
-    desc:`Classic work by ${b[1]} (${b[3] > 0 ? b[3] : Math.abs(b[3])+'BC'}).`,
-    grade:"8-12"
-  });
-});
-
-// Add more Chinese books
-MORE_BOOKS_ZH.forEach((b,i) => {
-  allBooks.push({
-    id: 300+i, title:b[0], author:b[1], cat:b[2], year:b[3], lang:"ZH",
-    url:`https://zh.wikisource.org/wiki/Special:Search/${encodeURIComponent(b[0])}`,
-    desc:`中國古代重要典籍，作者：${b[1]}。`,
-    grade:"9-12"
-  });
-});
-
-// Fill to 1200+ with Gutenberg catalog patterns
+// Generate placeholders to make up the 1200+ list
 const GENRES = ["adventure","classic","literature","mystery","science","biography","fantasy","history","philosophy","drama"];
 const AUTHORS_EN = ["Various Authors","Anonymous","Public Domain","Historical Author"];
 for(let i = allBooks.length; i < 1250; i++){
@@ -1285,6 +1191,7 @@ let currentLang = 'zh';
 let readingList = JSON.parse(localStorage.getItem('ksis_reading_list') || '[]');
 let currentUser = null;
 let currentPage = 'home';
+const preloadedTexts = new Set(); 
 
 // DEMO ACCOUNTS
 const ACCOUNTS = {
@@ -1368,10 +1275,23 @@ function renderAll(){
 
 function getCoverImgUrl(book) {
   if (book.url.includes('gutenberg.org/ebooks/')) {
-    const id = book.url.match(/\/ebooks\/(\d+)/)?.[1];
+    const id = book.url.match(/\/ebooks\/(\d+)/)?.;
     if (id) return `https://www.gutenberg.org/cache/epub/${id}/pg${id}.cover.medium.jpg`;
   }
   return null;
+}
+
+// Preload intent on hover (makes opening nearly instant)
+function preloadBookHover(id) {
+  if (preloadedTexts.has(id)) return;
+  preloadedTexts.add(id);
+  const book = allBooks.find(b => b.id === id);
+  if (!book || !book.url.includes('gutenberg.org/ebooks/')) return;
+  
+  const bid = book.url.match(/\/ebooks\/(\d+)/)?.;
+  if (!bid || localStorage.getItem('ksis_book_' + bid)) return;
+  
+  fetchBookText(book).catch(()=>{}); // Silent fetch
 }
 
 function makeBookCard(book){
@@ -1386,7 +1306,7 @@ function makeBookCard(book){
          onerror="this.remove();this.parentElement&&(this.parentElement.querySelector('.cover-fallback').style.display='flex')">
        <div class="cover-fallback" style="display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;padding:12px;color:#fff;font-weight:700;font-size:12px;text-align:center;line-height:1.4;">${title}<div class="cover-icon" style="position:absolute;bottom:8px;right:8px;font-size:11px;background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:10px;">${catIcon}</div></div>`
     : `<div class="cover-fallback" style="display:flex;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;padding:12px;color:#fff;font-weight:700;font-size:12px;text-align:center;line-height:1.4;">${title}<div class="cover-icon" style="position:absolute;bottom:8px;right:8px;font-size:11px;background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:10px;">${catIcon}</div></div>`;
-  return `<div class="book-card" onclick="openReader(${book.id})">
+  return `<div class="book-card" onclick="openReader(${book.id})" onmouseenter="preloadBookHover(${book.id})">
     <div class="book-cover" style="background-color:${bg};position:relative;overflow:hidden;">
       ${coverHtml}
       <div class="cover-spine"></div>
@@ -1483,7 +1403,7 @@ function renderReadingList(){
         <div class="reading-item-title">${b.title}</div>
         <div class="reading-item-author">${b.author}</div>
       </div>
-      <button onclick="openReader(${b.id})" class="action-btn secondary" style="margin-right:8px;font-size:11px;">${currentLang==='zh'?'閱讀':'Read'}</button>
+      <button onclick="openReader(${b.id})" class="action-btn primary" style="margin-right:8px;font-size:11px;">${currentLang==='zh'?'閱讀':'Read'}</button>
       <button class="remove-btn" onclick="removeFromList(${b.id})" title="Remove">✕</button>
     </div>
   `).join('');
@@ -1505,17 +1425,17 @@ let bookText = '';
 let bookPages = [];
 let currentPageIndex = 0;
 const PAGE_SIZE = 3500;
+let chapterMap = {}; // pageIndex -> chapter title 
 
-// ── CORS proxies tried IN PARALLEL — fastest one wins ──
+// Optimized Proxy Fetching (Parallel Racing)
 const PROXIES = [
   'https://api.allorigins.win/raw?url=',
   'https://corsproxy.io/?url=',
-  'https://api.codetabs.com/v1/proxy?quest=',
-  'https://thingproxy.freeboard.io/fetch/',
+  'https://api.codetabs.com/v1/proxy?quest='
 ];
 
 function getTextUrls(book) {
-  const id = book.url.match(/\/ebooks\/(\d+)/)?.[1];
+  const id = book.url.match(/\/ebooks\/(\d+)/)?.;
   if (!id) return [];
   return [
     `https://www.gutenberg.org/cache/epub/${id}/pg${id}.txt`,
@@ -1524,24 +1444,22 @@ function getTextUrls(book) {
 }
 
 async function fetchBookText(book) {
-  const id = book.url.match(/\/ebooks\/(\d+)/)?.[1];
+  const id = book.url.match(/\/ebooks\/(\d+)/)?.;
   if (!id) return null;
 
-  // ── 1. Instant cache hit ──
   try {
     const cached = localStorage.getItem('ksis_book_' + id);
     if (cached && cached.length > 2000) return cached;
   } catch(e) {}
 
   const urls = getTextUrls(book);
-
-  // ── 2. Fire ALL proxy+URL combos in PARALLEL — first valid response wins ──
   const attempts = [];
+  
   for (const url of urls) {
     for (const proxy of PROXIES) {
       attempts.push(new Promise((resolve, reject) => {
         const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 14000);
+        const timer = setTimeout(() => ctrl.abort(), 12000); 
         fetch(proxy + encodeURIComponent(url), {signal: ctrl.signal})
           .then(r => r.ok ? r.text() : Promise.reject('bad'))
           .then(t => {
@@ -1557,7 +1475,6 @@ async function fetchBookText(book) {
 
   try {
     const text = await Promise.any(attempts);
-    // Cache for instant future loads
     try { localStorage.setItem('ksis_book_' + id, text.substring(0, 280000)); } catch(e) {}
     return text;
   } catch(e) { return null; }
@@ -1565,23 +1482,15 @@ async function fetchBookText(book) {
 
 // Clean Gutenberg text thoroughly
 function cleanGutenbergText(raw) {
-  // Remove [Illustration: ...] tags (the main issue!)
   raw = raw.replace(/\[Illustration[^\]]*\]/gi, '');
   raw = raw.replace(/\[Illustration[^[]*?\]/gis, '');
 
-  // Remove everything before "*** START OF"
   const startMatch = raw.match(/\*{3}\s*START OF (THE|THIS) PROJECT GUTENBERG[^\n]*\n/i);
-  if (startMatch) {
-    raw = raw.slice(raw.indexOf(startMatch[0]) + startMatch[0].length);
-  }
-  // Remove everything after "*** END OF"
+  if (startMatch) raw = raw.slice(raw.indexOf(startMatch) + startMatch.length);
+  
   const endMatch = raw.match(/\*{3}\s*END OF (THE|THIS) PROJECT GUTENBERG/i);
-  if (endMatch) {
-    raw = raw.slice(0, raw.indexOf(endMatch[0]));
-  }
+  if (endMatch) raw = raw.slice(0, raw.indexOf(endMatch));
 
-  // Skip publisher frontmatter — jump to first real chapter or substantial content
-  // Look for "Chapter", "CHAPTER", or Chinese chapter markers
   const chapterPatterns = [
     /\n(CHAPTER\s+[IVXLCDM\d]+)/im,
     /\n(Chapter\s+[IVXLCDM\d]+)/m,
@@ -1594,40 +1503,33 @@ function cleanGutenbergText(raw) {
   ];
   for (const pat of chapterPatterns) {
     const m = raw.match(pat);
-    if (m && raw.indexOf(m[0]) > 0) {
-      const idx = raw.indexOf(m[0]);
-      // Only skip if there's a lot of frontmatter (more than 500 chars)
+    if (m && raw.indexOf(m) > 0) {
+      const idx = raw.indexOf(m);
       if (idx > 500) { raw = raw.slice(idx); break; }
     }
   }
 
-  // Remove lines that are just dashes, underscores or page markers
   raw = raw.replace(/^[-_=]{4,}\s*$/gm, '');
-  // Remove Roman numeral only lines (page numbers)
   raw = raw.replace(/^\s*[IVXLCDM]+\s*$/gm, '');
-  // Remove bare numbers on their own lines (page numbers)
   raw = raw.replace(/^\s*\d{1,4}\s*$/gm, '');
-  // Remove excessive blank lines
   raw = raw.replace(/\n{4,}/g, '\n\n\n');
-
   return raw.trim();
 }
-
-let chapterMap = {}; // pageIndex -> chapter title (for TOC links)
 
 function isChapterHeading(t) {
   return (
     /^(CHAPTER|BOOK|PART)\s+[\dIVXLCDMivxlcdm]+/i.test(t) ||
     /^第[一二三四五六七八九十百千]+[章節回篇]/m.test(t) ||
-    /^(CHAPTER|BOOK|PART)\s+(ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)/i.test(t)
+    /^(CHAPTER|BOOK|PART)\s+(ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)/i.test(t) ||
+    /^(PROLOGUE|EPILOGUE|PREFACE|INTRODUCTION)$/i.test(t.trim())
   );
 }
 
-// Split text into pages, breaking at chapter boundaries
+// Split text into pages and generate a dedicated Table of Contents (TOC) page
 function paginateText(text) {
   const paragraphs = text.split(/\n\n+/);
-  const pages = [];
-  const chapMap = {};
+  const rawPages = [];
+  const tempChapMap = {};
   let page = '';
 
   for (const para of paragraphs) {
@@ -1636,70 +1538,63 @@ function paginateText(text) {
     const heading = isChapterHeading(trimmed);
 
     if (heading && page.length > 400) {
-      // Start a new page at this chapter
-      pages.push(page.trim());
-      chapMap[pages.length] = trimmed.split('\n')[0].substring(0, 80);
+      rawPages.push(page.trim());
+      tempChapMap[rawPages.length] = trimmed.split('\n').substring(0, 80);
       page = trimmed + '\n\n';
     } else if (!heading && (page + trimmed).length > PAGE_SIZE && page.length > 300) {
-      // Normal page break mid-chapter
-      pages.push(page.trim());
+      rawPages.push(page.trim());
       page = trimmed + '\n\n';
     } else {
       if (heading && page.length <= 400) {
-        // Chapter heading near start of page, record it
-        chapMap[pages.length] = trimmed.split('\n')[0].substring(0, 80);
+        tempChapMap[rawPages.length] = trimmed.split('\n').substring(0, 80);
       }
       page += trimmed + '\n\n';
     }
   }
-  if (page.trim().length > 50) pages.push(page.trim());
-  return { pages, chapMap };
+  if (page.trim().length > 50) rawPages.push(page.trim());
+
+  // Automatically insert TOC at the beginning if chapters exist
+  const entries = Object.entries(tempChapMap);
+  if (entries.length > 1) { // Only make a TOC if there's more than 1 chapter
+    rawPages.unshift("===TOC_MAGIC_MARKER===");
+    const finalChapMap = { 0: "Table of Contents" };
+    for (const [idx, title] of entries) {
+      finalChapMap[parseInt(idx) + 1] = title; // Shift everything by 1 page
+    }
+    return { pages: rawPages, chapMap: finalChapMap };
+  }
+  
+  return { pages: rawPages, chapMap: tempChapMap };
 }
 
 // Render current page as HTML
 function renderPage() {
   if (!bookPages.length) return;
   const raw = bookPages[currentPageIndex];
-  const lines = raw.split('\n');
-
-  // Detect if this page is a Table of Contents
-  const chapterRefs = (raw.match(/CHAPTER\s+[IVXLCDM\d]+/gi) || []).length +
-                      (raw.match(/第[一二三四五六七八九十百千]+[章節回篇]/g) || []).length;
-  const isTOC = chapterRefs >= 3 && raw.length < 4000;
-
+  
   let html = '';
 
-  if (isTOC) {
-    html += `<div style="text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #c8960c;">
-      <span style="font-size:11px;letter-spacing:2px;color:#7a6550;text-transform:uppercase;">
-        ${currentLang==='zh'?'📋 章節目錄 — 點擊跳轉':'📋 Table of Contents — Click to Jump'}
-      </span>
-    </div>`;
-    for (const line of lines) {
-      const t = line.trim();
-      if (!t) continue;
-      if (/^\[Illustration/i.test(t)) continue;
-      // Check if this line is a chapter reference
-      const isChapRef = /^(CHAPTER|BOOK|PART)\s+[\dIVXLCDMivxlcdm]+/i.test(t) ||
-                        /^第[一二三四五六七八九十百千]+[章節回篇]/m.test(t);
-      if (isChapRef) {
-        // Find which page this chapter is on
-        const targetPage = findChapterPage(t);
-        if (targetPage >= 0) {
-          html += `<div onclick="jumpToPage(${targetPage})" style="padding:8px 12px;margin:3px 0;border-left:3px solid #c8960c;cursor:pointer;background:#faf6ef;border-radius:0 3px 3px 0;transition:background 0.15s;font-family:'EB Garamond',serif;font-size:14px;color:#1a2744;"
-            onmouseover="this.style.background='#f5e8c0'" onmouseout="this.style.background='#faf6ef'">${t}</div>`;
-        } else {
-          html += `<div style="padding:8px 12px;margin:3px 0;border-left:3px solid #ddd;font-family:'EB Garamond',serif;font-size:14px;color:#7a6550;">${t}</div>`;
-        }
-      } else if (t.length < 60 && t === t.toUpperCase() && /[A-Z]{3,}/.test(t)) {
-        html += `<h4 class="section-title">${t}</h4>`;
-      } else if (t.startsWith('By ') || t.length < 80) {
-        html += `<p style="text-align:center;font-style:italic;color:#7a6550;font-size:13px;">${t}</p>`;
-      } else {
-        html += `<p>${t}</p>`;
-      }
+  // Render the Dedicated Table of Contents Page
+  if (raw.startsWith("===TOC_MAGIC_MARKER===")) {
+    html = `<div style="max-width: 600px; margin: 0 auto; padding: 10px;">
+      <h2 style="text-align:center; font-family:'EB Garamond',serif; color:var(--navy); margin-bottom: 24px; font-size: 26px; border-bottom: 2px solid var(--gold); padding-bottom: 12px;">
+        ${currentLang === 'zh' ? '📖 書節目錄 Table of Contents' : '📖 Table of Contents'}
+      </h2>
+      <div style="display: flex; flex-direction: column; gap: 8px;">`;
+      
+    for (const [idx, title] of Object.entries(chapterMap)) {
+      if (idx == 0) continue; // Skip TOC itself
+      html += `<div onclick="jumpToPage(${idx})" class="toc-item" style="display:flex; justify-content:space-between; align-items:baseline; padding: 12px 16px; background: #fff; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: all 0.2s;">
+        <span style="font-weight: 600; font-family: 'EB Garamond', serif; font-size: 16px; color: var(--navy);">${title}</span>
+        <span style="font-size: 12px; color: var(--text-muted); border-bottom: 1px dotted var(--text-muted); flex-grow: 1; margin: 0 12px; position: relative; top: -4px;"></span>
+        <span style="font-size: 13px; color: var(--gold-light); font-weight: bold; font-family: sans-serif;">Pg ${parseInt(idx)+1}</span>
+      </div>`;
     }
-  } else {
+    html += `</div></div>`;
+  } 
+  // Render Normal Text Page
+  else {
+    const lines = raw.split('\n');
     for (const line of lines) {
       const t = line.trim();
       if (!t) continue;
@@ -1729,26 +1624,12 @@ function renderPage() {
   document.querySelector('.in-reader-scroll')?.scrollTo(0, 0);
   if (currentBook) localStorage.setItem('ksis_pos_'+currentBook.id, currentPageIndex);
 
-  // Update chapters panel if open
   updateChaptersPanel();
 }
 
-function findChapterPage(chapterTitle) {
-  const clean = chapterTitle.trim().toUpperCase().replace(/[^A-Z0-9一二三四五六七八九十百千章節回篇IVXLCDM]/g, ' ').trim();
-  for (const [pageIdx, title] of Object.entries(chapterMap)) {
-    const t = title.toUpperCase().replace(/[^A-Z0-9一二三四五六七八九十百千章節回篇IVXLCDM]/g, ' ').trim();
-    // Match on the chapter number part
-    const numMatch = clean.match(/(CHAPTER|第)\s*([IVXLCDM\d一二三四五六七八九十]+)/i);
-    const tMatch = t.match(/(CHAPTER|第)\s*([IVXLCDM\d一二三四五六七八九十]+)/i);
-    if (numMatch && tMatch && numMatch[2] === tMatch[2]) return parseInt(pageIdx);
-  }
-  return -1;
-}
-
 function jumpToPage(idx) {
-  currentPageIndex = idx;
+  currentPageIndex = parseInt(idx);
   renderPage();
-  document.querySelector('.in-reader-scroll')?.scrollTo(0, 0);
 }
 
 async function openReader(id) {
@@ -1759,26 +1640,21 @@ async function openReader(id) {
   currentPageIndex = 0;
   chapterMap = {};
 
-  // Show modal immediately
   document.getElementById('reader-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Update header
-  const coverImg = getCoverImg(book);
+  const coverImg = getCoverImgUrl(book);
   document.getElementById('modal-book-title-header').textContent = book.title;
   document.getElementById('modal-book-author-header').textContent = book.author + (book.year ? ' · ' + (book.year > 0 ? book.year : Math.abs(book.year)+' BC') : '');
   document.getElementById('modal-cover-badge').style.background = getCover(id);
   if (coverImg) document.getElementById('modal-cover-badge').innerHTML = '<img src="'+coverImg+'" style="width:100%;height:100%;object-fit:cover;border-radius:2px;" onerror="this.remove()">';
   document.getElementById('modal-book-title-crumb').textContent = book.title.length > 30 ? book.title.substring(0,30)+'…' : book.title;
 
-  // ── Always show content immediately — NEVER leave reader blank ──
   const preview = PREVIEWS[id];
   if (preview) {
-    // Has embedded chapter preview — show right away
     document.getElementById('reader-preview-body').innerHTML = preview;
     showReaderState('preview');
   } else {
-    // No preview: show a styled info card instantly while full text loads
     const catLabel = (CATEGORIES.find(c=>c.key===book.cat)||{zh:'書籍',en:'Book'})[currentLang==='zh'?'zh':'en'];
     document.getElementById('reader-preview-body').innerHTML =
       '<div style="text-align:center;padding:32px 20px 20px;">'
@@ -1791,12 +1667,12 @@ async function openReader(id) {
       +(book.desc ? '<p style="font-size:15px;line-height:1.8;color:#4a3520;text-align:center;margin-bottom:20px;font-style:italic;">'+book.desc+'</p>' : '')
       +'<div style="background:#f5e8c0;border:1px solid rgba(200,150,12,0.3);border-radius:4px;padding:14px 18px;text-align:center;">'
       +'<p style="font-size:13px;color:#5c3d1e;margin:0;">⏳ '+(currentLang==='zh'?'正在從圖書館載入全文，請稍候…':'Loading full text from library, please wait…')+'</p>'
-      +'<p style="font-size:11px;color:#8b6340;margin:6px 0 0;font-style:italic;">'+(currentLang==='zh'?'（初次載入需約15-30秒，之後立即開啟）':'First load takes ~15-30 seconds. Subsequent opens are instant.')+'</p>'
+      +'<p style="font-size:11px;color:#8b6340;margin:6px 0 0;font-style:italic;">'+(currentLang==='zh'?'（若伺服器忙碌，可能需要約15-30秒）':'Please allow ~15-30 seconds depending on server speed.')+'</p>'
       +'</div></div>';
     showReaderState('preview');
   }
 
-  // ── Fetch full text in background for ALL gutenberg books ──
+  // Fetch full text immediately 
   if (book.url.includes('gutenberg.org/ebooks/')) {
     fetchBookText(book).then(raw => {
       if (!currentBook || currentBook.id !== id) return;
@@ -1817,17 +1693,16 @@ async function openReader(id) {
   }
 }
 
-// Start preloading popular books after 4 seconds (silent background caching)
+// Background loading of popular texts
 function preloadPopularBooks() {
-  const popular = [1,2,3,5,6,8,9,10,17,22,23,24,25,28,31,45,47,49,56];
+  const popular =;
   let i = 0;
   const loadNext = () => {
     if (i >= popular.length) return;
     const book = allBooks.find(b => b.id === popular[i++]);
-    if (!book) { loadNext(); return; }
-    const bid = book.url && book.url.match(/\/ebooks\/(\d+)/)?.[1];
-    if (!bid) { loadNext(); return; }
-    try { if (localStorage.getItem('ksis_book_'+bid)) { setTimeout(loadNext, 100); return; } } catch(e) {}
+    if (!book || !book.url.includes('gutenberg.org/ebooks/')) { loadNext(); return; }
+    const bid = book.url.match(/\/ebooks\/(\d+)/)?.;
+    if (!bid || localStorage.getItem('ksis_book_'+bid)) { setTimeout(loadNext, 100); return; }
     fetchBookText(book).then(()=> setTimeout(loadNext, 2000)).catch(()=> setTimeout(loadNext, 2000));
   };
   setTimeout(loadNext, 4000);
@@ -1905,12 +1780,6 @@ function toggleList() {
   else readingList.push(currentBook);
   localStorage.setItem('ksis_reading_list', JSON.stringify(readingList));
   updateListBtn(currentBook.id);
-}
-function addToList(id) {
-  const book = allBooks.find(b=>b.id===id);
-  if(!book||readingList.some(b=>b.id===id)) return;
-  readingList.push(book);
-  localStorage.setItem('ksis_reading_list', JSON.stringify(readingList));
 }
 function removeFromList(id) {
   readingList = readingList.filter(b=>b.id!==id);
