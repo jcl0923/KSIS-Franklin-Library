@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -941,6 +940,9 @@ body {
       <!-- PREVIEW (Chinese/fallback) -->
       <div id="reader-state-preview" class="reader-state in-reader-scroll" style="display:none;">
         <div class="reader-watermark">KSIS Franklin Library · 崑山富蘭克林圖書館</div>
+        <div style="text-align:center;padding:8px 20px;background:#f5e8c0;border-bottom:1px solid rgba(200,150,12,0.3);font-size:12px;color:#5c3d1e;font-style:italic;" id="reader-loading-msg">
+          ⏳ 正在背景載入完整版本，請稍候… &nbsp;|&nbsp; Loading full text in background…
+        </div>
         <div id="reader-preview-body" class="reader-text-body"></div>
         <div class="reader-footer-brand">
           📚 崑山國際學校富蘭克林數位圖書館 · Kuen Shan International School Franklin Digital Library · ksis.tn.edu.tw
@@ -1507,7 +1509,6 @@ const PAGE_SIZE = 3500;
 const PROXIES = [
   'https://api.allorigins.win/raw?url=',
   'https://corsproxy.io/?url=',
-  'https://api.codetabs.com/v1/proxy?quest=',
 ];
 
 // Gutenberg URL patterns to try in order
@@ -1518,24 +1519,32 @@ function getTextUrls(book) {
   return [
     `https://www.gutenberg.org/cache/epub/${id}/pg${id}.txt`,
     `https://www.gutenberg.org/files/${id}/${id}-0.txt`,
-    `https://www.gutenberg.org/files/${id}/${id}.txt`,
   ];
 }
 
 async function fetchBookText(book) {
+  const id = book.url.match(/\/ebooks\/(\d+)/)?.[1];
+  if (!id) return null;
+
+  // ── Check localStorage cache first (instant!) ──
+  try {
+    const cached = localStorage.getItem('ksis_book_' + id);
+    if (cached && cached.length > 2000) return cached;
+  } catch(e) {}
+
   const urls = getTextUrls(book);
-  if (!urls.length) return null;
-  for (const url of urls) {
-    for (const proxy of PROXIES) {
+  for (const proxy of PROXIES) {
+    for (const url of urls) {
       try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 10000);
-        const res = await fetch(proxy + encodeURIComponent(url), { signal: controller.signal });
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 9000);
+        const res = await fetch(proxy + encodeURIComponent(url), { signal: ctrl.signal });
         clearTimeout(timer);
         if (!res.ok) continue;
         const text = await res.text();
-        // Reject error pages or too-short responses
-        if (text.length < 2000 || text.includes('<html') || text.includes('error')) continue;
+        if (text.length < 3000 || text.trim().startsWith('<')) continue;
+        // Cache for instant future loads (first 280KB is plenty for many chapters)
+        try { localStorage.setItem('ksis_book_' + id, text.substring(0, 280000)); } catch(e) {}
         return text;
       } catch(e) { continue; }
     }
@@ -1737,8 +1746,9 @@ async function openReader(id) {
   currentBook = book;
   bookPages = [];
   currentPageIndex = 0;
+  chapterMap = {};
 
-  // Show modal immediately with loading state
+  // Show modal immediately
   document.getElementById('reader-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 
@@ -1746,46 +1756,41 @@ async function openReader(id) {
   document.getElementById('modal-book-title-header').textContent = book.title;
   document.getElementById('modal-book-author-header').textContent = book.author + (book.year ? ' · ' + (book.year > 0 ? book.year : Math.abs(book.year)+' BC') : '');
   document.getElementById('modal-cover-badge').style.background = getCover(id);
-
   document.getElementById('modal-book-title-crumb').textContent = book.title.length > 30 ? book.title.substring(0,30)+'…' : book.title;
 
-  const hasGutenbergUrl = book.url.includes('gutenberg.org/ebooks/');
-
-  if (hasGutenbergUrl) {
-    try {
-      const raw = await fetchBookText(book);
-      if (!raw) throw new Error('no content');
-      const cleaned = cleanGutenbergText(raw);
-      if (cleaned.length < 500) throw new Error('too short');
-      const result = paginateText(cleaned);
-      bookPages = result.pages;
-      chapterMap = result.chapMap;
-      if (!bookPages.length) throw new Error('no pages');
-      const saved = localStorage.getItem('ksis_pos_'+book.id);
-      currentPageIndex = saved ? Math.min(parseInt(saved), bookPages.length-1) : 0;
-      showReaderState('text');
-      renderPage();
-    } catch(e) {
-      const preview = PREVIEWS[id];
-      if (preview) {
-        showReaderState('preview');
-        document.getElementById('reader-preview-body').innerHTML = preview;
-      } else {
-        showReaderState('unavailable');
-      }
-    }
-  } else if (book.lang === 'ZH') {
-    // Chinese books: use embedded previews
-    const preview = PREVIEWS[id];
-    if (preview) {
-      bookPages = ['PREVIEW'];
-      showReaderState('preview');
-      document.getElementById('reader-preview-body').innerHTML = preview;
-    } else {
-      showReaderState('unavailable');
-    }
+  // ── STEP 1: Show preview text IMMEDIATELY so reader isn't blank ──
+  const preview = PREVIEWS[id];
+  if (preview) {
+    document.getElementById('reader-preview-body').innerHTML = preview;
+    showReaderState('preview');
   } else {
-    showReaderState('unavailable');
+    showReaderState('loading');
+  }
+
+  // ── STEP 2: Fetch full text in the background ──
+  if (book.url.includes('gutenberg.org/ebooks/')) {
+    // Update loading message
+    const loadMsg = document.getElementById('reader-loading-msg');
+    if (loadMsg) loadMsg.textContent = currentLang==='zh' ? '正在載入完整版本…' : 'Loading full text…';
+
+    fetchBookText(book).then(raw => {
+      // If user closed the reader while fetching, do nothing
+      if (currentBook?.id !== id) return;
+      if (!raw) return; // Keep showing preview
+
+      try {
+        const cleaned = cleanGutenbergText(raw);
+        if (cleaned.length < 500) return;
+        const result = paginateText(cleaned);
+        if (!result.pages || !result.pages.length) return;
+        bookPages = result.pages;
+        chapterMap = result.chapMap;
+        const saved = localStorage.getItem('ksis_pos_'+book.id);
+        currentPageIndex = saved ? Math.min(parseInt(saved), bookPages.length-1) : 0;
+        showReaderState('text');
+        renderPage();
+      } catch(e) { /* keep showing preview */ }
+    }).catch(() => { /* keep showing preview */ });
   }
 }
 
