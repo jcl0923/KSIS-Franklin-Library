@@ -272,32 +272,33 @@ footer{position:relative;z-index:1;
 /* ── State ─────────────────────────────────── */
 let lang = localStorage.getItem('ksisLang') || 'zh';
 let currentPage = 1;
-let currentTopic = '';
+let currentCat = CATS[0];
 let currentSearch = '';
 let totalCount = 0;
 const PER_PAGE = 32;
-const API = 'https://openlibrary.org/search.json';
-const FIELDS = 'key,title,author_name,cover_i,first_publish_year,subject,ia,language,edition_count';
+const API = 'https://www.googleapis.com/books/v1/volumes';
 
 const CATS = [
-  {zh:'全部',en:'All',topic:''},
-  {zh:'冒險',en:'Adventure',topic:'adventure'},
-  {zh:'經典文學',en:'Literature',topic:'fiction'},
-  {zh:'推理懸疑',en:'Mystery',topic:'mystery_fiction'},
-  {zh:'歷史',en:'History',topic:'history'},
-  {zh:'科學',en:'Science',topic:'science'},
-  {zh:'詩歌',en:'Poetry',topic:'poetry'},
-  {zh:'傳記',en:'Biography',topic:'biography'},
-  {zh:'哲學',en:'Philosophy',topic:'philosophy'},
-  {zh:'戲劇',en:'Drama',topic:'drama'},
+  {zh:'全部',    en:'All',        q:'classic literature public domain'},
+  {zh:'冒險',    en:'Adventure',  q:'adventure stories classic'},
+  {zh:'經典文學',en:'Literature', q:'classic fiction novel'},
+  {zh:'推理懸疑',en:'Mystery',    q:'mystery detective fiction'},
+  {zh:'歷史',    en:'History',    q:'history ancient world'},
+  {zh:'科學',    en:'Science',    q:'science nature discovery'},
+  {zh:'詩歌',    en:'Poetry',     q:'poetry poems classic'},
+  {zh:'傳記',    en:'Biography',  q:'biography autobiography memoir'},
+  {zh:'哲學',    en:'Philosophy', q:'philosophy ethics wisdom'},
+  {zh:'戲劇',    en:'Drama',      q:'drama plays shakespeare'},
+  {zh:'兒童',    en:'Children',   q:'children stories fairy tales classic'},
+  {zh:'旅遊',    en:'Travel',     q:'travel exploration voyage'},
 ];
 
 /* ── Init ──────────────────────────────────── */
 window.addEventListener('DOMContentLoaded', () => {
   const u = sessionStorage.getItem('ksisUser');
   document.getElementById('uname').textContent = u || '—';
-  buildCats();
   applyLang(lang);
+  buildCats();
   loadBooks();
 });
 
@@ -325,15 +326,15 @@ function applyLang(l){
 /* ── Categories ─────────────────────────────── */
 function buildCats(){
   const el = document.getElementById('cats');
-  el.innerHTML = CATS.map(c=>`
-    <button class="cat-btn${c.topic===currentTopic?' active':''}"
-            onclick="selectCat('${c.topic}')">
+  el.innerHTML = CATS.map((c,i)=>`
+    <button class="cat-btn${c.q===currentCat.q?' active':''}"
+            onclick="selectCat(${i})">
       ${lang==='zh'?c.zh:c.en}
     </button>`).join('');
 }
 
-function selectCat(topic){
-  currentTopic = topic;
+function selectCat(i){
+  currentCat = CATS[i];
   currentPage = 1;
   currentSearch = '';
   document.getElementById('search-input').value = '';
@@ -358,39 +359,35 @@ async function loadBooks(){
     <div>${lang==='zh'?'正在載入書庫…':'Loading library…'}</div></div>`;
   document.getElementById('pagination').style.display='none';
 
+  const q = currentSearch || currentCat.q;
   const params = new URLSearchParams({
-    limit: PER_PAGE,
-    page: currentPage,
-    fields: FIELDS
+    q,
+    maxResults: PER_PAGE,
+    startIndex: (currentPage-1)*PER_PAGE,
+    filter: 'free-ebooks',
+    printType: 'books',
+    orderBy: 'relevance'
   });
-  if(currentSearch){
-    params.set('q', currentSearch);
-  } else if(currentTopic){
-    params.set('subject', currentTopic);
-  } else {
-    params.set('q', 'the');
-    params.set('sort', 'editions');
-  }
 
   try{
     const controller = new AbortController();
-    const timer = setTimeout(()=>controller.abort(), 20000);
+    const timer = setTimeout(()=>controller.abort(), 15000);
     const res = await fetch(`${API}?${params}`, {signal: controller.signal});
     clearTimeout(timer);
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
-    const count = data.numFound || 0;
+    const count = Math.min(data.totalItems||0, 1000); // Google caps at 1000
     totalCount = count;
     updateResultsInfo(count);
-    renderBooks(data.docs || [], area);
+    renderBooks(data.items || [], area);
     renderPagination(count);
   }catch(err){
     const isTimeout = err.name==='AbortError';
     area.innerHTML=`<div class="error">
       <div class="error-icon">⚠️</div>
       <p>${lang==='zh'
-        ? (isTimeout ? '書庫連線逾時，請重新整理頁面再試。' : '無法連接書庫，請檢查網路連線。')
-        : (isTimeout ? 'Connection timed out. Please refresh and try again.' : 'Could not reach the library. Please check your connection.')
+        ? (isTimeout?'書庫連線逾時，請重新整理頁面再試。':'無法連接書庫，請檢查網路連線。')
+        : (isTimeout?'Connection timed out. Please refresh and try again.':'Could not reach the library. Please check your connection.')
       }</p>
       <button onclick="loadBooks()" style="margin-top:16px;padding:10px 24px;background:var(--gold);color:var(--navy);border:none;border-radius:3px;cursor:pointer;font:inherit;font-size:.88rem;">${lang==='zh'?'重新載入':'Reload'}</button>
     </div>`;
@@ -401,72 +398,54 @@ function updateResultsInfo(count){
   const start = (currentPage-1)*PER_PAGE+1;
   const end   = Math.min(currentPage*PER_PAGE, count);
   const el = document.getElementById('results-info');
-  if(lang==='zh'){
-    el.textContent = `顯示第 ${start.toLocaleString()}–${end.toLocaleString()} 筆，共 ${count.toLocaleString()} 冊`;
-  } else {
-    el.textContent = `Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${count.toLocaleString()} books`;
-  }
+  el.textContent = lang==='zh'
+    ? `顯示第 ${start}–${end} 筆，共 ${count.toLocaleString()}+ 冊`
+    : `Showing ${start}–${end} of ${count.toLocaleString()}+ books`;
   document.getElementById('total-count').textContent = count.toLocaleString()+'+';
 }
 
 /* ── Render Books ───────────────────────────── */
-function renderBooks(books, area){
-  if(!books.length){
-    area.innerHTML=`<div class="empty">
-      <div class="empty-icon">📚</div>
-      <p>${lang==='zh'?'查無相符書籍，請嘗試其他關鍵字。':'No books found. Try a different search.'}</p>
-    </div>`;
+function renderBooks(items, area){
+  if(!items||!items.length){
+    area.innerHTML=`<div class="empty"><div class="empty-icon">📚</div>
+      <p>${lang==='zh'?'查無相符書籍，請嘗試其他關鍵字。':'No books found. Try a different search.'}</p></div>`;
     return;
   }
 
-  const cards = books.map(b=>{
-    const title = b.title || 'Untitled';
-    const author = (b.author_name||[])[0] || (lang==='zh'?'佚名':'Unknown');
-    const cover = b.cover_i
-      ? `https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg`
-      : '';
-    const langs = ((b.language||['en']).slice(0,2)).map(l=>l.toUpperCase()).join('·');
-    const editions = b.edition_count ? `${b.edition_count} ed.` : '';
-    const shortTitle = title.length > 55 ? title.substring(0,55)+'…' : title;
+  const cards = items.map(item=>{
+    const v = item.volumeInfo || {};
+    const title  = (v.title||'Untitled').replace(/"/g,'&quot;');
+    const author = (v.authors||[])[0] || (lang==='zh'?'佚名':'Unknown');
+    const year   = (v.publishedDate||'').slice(0,4);
+    const cover  = (v.imageLinks?.thumbnail||'').replace('http:','https:');
+    const shortTitle = title.length>55 ? title.slice(0,55)+'…' : title;
+    const reader = (item.accessInfo?.webReaderLink||'').replace('http:','https:');
 
-    // encode all data needed for book page
     const p = new URLSearchParams({
-      id: (b.key||'').replace('/works/',''),
-      t:  title,
-      a:  author,
-      c:  b.cover_i||'',
-      ia: (b.ia||[])[0]||'',
-      y:  b.first_publish_year||''
+      id: item.id, t: v.title||'', a: author,
+      cover: cover, y: year, reader: reader
     });
 
-    return `<div class="book-card" onclick="location.href='book.html?${p}'" title="${title.replace(/"/g,'&quot;')}">
+    return `<div class="book-card" onclick="location.href='book.html?${p}'"
+            title="${title}">
       <div class="cover-wrap">
         ${cover
-          ? `<img src="${cover}" alt="${shortTitle.replace(/"/g,'')}" loading="lazy"
-               onerror="this.parentNode.innerHTML='<div class=cover-placeholder>📖<span>${langs}</span></div>'">`
-          : `<div class="cover-placeholder">📖<span>${langs}</span></div>`}
+          ? `<img src="${cover}" alt="${shortTitle}" loading="lazy"
+               onerror="this.parentNode.innerHTML='<div class=cover-placeholder>📖<span>${(v.language||'en').toUpperCase()}</span></div>'">`
+          : `<div class="cover-placeholder">📖<span>${(v.language||'en').toUpperCase()}</span></div>`}
       </div>
       <div class="card-body">
         <div class="card-title">${shortTitle}</div>
         <div class="card-author">${author}</div>
         <div class="card-foot">
-          <span class="lang-badge">${langs}</span>
-          <span class="dl-count">${editions}</span>
+          <span class="lang-badge">${(v.language||'en').toUpperCase()}</span>
+          <span class="dl-count">${year}</span>
         </div>
       </div>
     </div>`;
   }).join('');
 
   area.innerHTML = `<div class="book-grid">${cards}</div>`;
-}
-
-function openBook(b){
-  const p = new URLSearchParams({
-    id: (b.key||'').replace('/works/',''),
-    t: b.title||'', a: (b.author_name||[])[0]||'',
-    c: b.cover_i||'', ia: (b.ia||[])[0]||'', y: b.first_publish_year||''
-  });
-  location.href='book.html?'+p;
 }
 
 /* ── Pagination ─────────────────────────────── */
@@ -481,4 +460,22 @@ function renderPagination(count){
     <button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>
       &#8592; ${lang==='zh'?'上一頁':'Prev'}
     </button>
-    <span 
+    <span class="pg-info">${label}</span>
+    <button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=total?'disabled':''}>
+      ${lang==='zh'?'下一頁':'Next'} &#8594;
+    </button>`;
+}
+
+function goPage(p){
+  currentPage = p;
+  loadBooks();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function logout(){
+  sessionStorage.clear();
+  location.href='index.html';
+}
+</script>
+</body>
+</html>

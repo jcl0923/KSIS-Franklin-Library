@@ -189,30 +189,30 @@ window.addEventListener('DOMContentLoaded', async ()=>{
   applyLang(lang);
 
   const p = new URLSearchParams(location.search);
-  const id    = p.get('id');
-  const title = p.get('t') || 'Untitled';
-  const author= p.get('a') || '';
-  const covId = p.get('c') || '';
-  const ia    = p.get('ia') || '';
-  const year  = p.get('y') || '';
+  const id     = p.get('id');
+  const title  = p.get('t') || 'Untitled';
+  const author = p.get('a') || '';
+  const cover  = p.get('cover') || '';
+  const year   = p.get('y') || '';
+  const reader = p.get('reader') || '';
 
   if(!id){ showError(lang==='zh'?'找不到此書':'Book not found'); return; }
 
   document.getElementById('bc-title').textContent = title;
 
   // Render immediately with URL param data
-  renderDetail({id, title, author, covId, ia, year, subjects:[], description:''});
+  renderDetail({id, title, author, cover, year, reader, subjects:[], description:''});
 
-  // Then fetch richer data from Open Library
+  // Enrich from Google Books API
   try{
-    const res = await fetch(`https://openlibrary.org/works/${id}.json`);
+    const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${id}`);
     if(res.ok){
       const data = await res.json();
-      const desc = typeof data.description === 'object'
-        ? data.description.value
-        : (data.description || '');
-      const subjects = data.subjects || [];
-      enrichDetail({desc, subjects});
+      const v = data.volumeInfo || {};
+      const desc = v.description || '';
+      const subjects = v.categories || [];
+      const richCover = (v.imageLinks?.large || v.imageLinks?.medium || v.imageLinks?.thumbnail || cover).replace('http:','https:');
+      enrichDetail({desc, subjects, cover: richCover});
     }
   }catch(e){}
 
@@ -234,29 +234,26 @@ function applyLang(l){
 }
 
 function renderDetail(b){
-  const cover = b.covId
-    ? `https://covers.openlibrary.org/b/id/${b.covId}-L.jpg`
-    : '';
-  // Build reader URL (stays within library site)
   const readerParams = new URLSearchParams({
     id: b.id, t: b.title, a: b.author,
-    c: b.covId, ia: b.ia, y: b.year
+    cover: b.cover, y: b.year, reader: b.reader
   });
   const readUrl = `reader.html?${readerParams}`;
+  const gbUrl   = `https://books.google.com/books?id=${b.id}`;
 
-  const coverHtml = cover
-    ? `<img class="cover-img" src="${cover}" alt="${b.title.replace(/"/g,'')}"
+  const coverHtml = b.cover
+    ? `<img class="cover-img" id="detail-cover" src="${b.cover}" alt="${(b.title||'').replace(/"/g,'')}"
            onerror="this.outerHTML='<div class=cover-no>📖<span>📚</span></div>'">`
     : `<div class="cover-no">📖<span>${lang==='zh'?'暫無封面':'No Cover'}</span></div>`;
 
   const metaItems = [
     {k:lang==='zh'?'作者':'Author',   v: b.author || (lang==='zh'?'佚名':'Unknown')},
     {k:lang==='zh'?'出版年份':'Year', v: b.year || '—'},
-    {k:lang==='zh'?'書庫':'Library',  v: 'Open Library'},
-    {k:lang==='zh'?'編號':'Work ID',  v: b.id},
+    {k:lang==='zh'?'書庫':'Library',  v: 'Google Books'},
+    {k:lang==='zh'?'編號':'Book ID',  v: b.id},
   ];
 
-  const html = `
+  document.getElementById('main-area').innerHTML = `
   <div class="book-detail">
     <div class="detail-grid">
       <div class="detail-cover">${coverHtml}</div>
@@ -273,11 +270,9 @@ function renderDetail(b){
         </div>
         <div class="subjects" id="subject-tags"></div>
         <div class="actions">
-          <a href="${readUrl}" class="btn-primary">
-            ${lang==='zh'?'📖 線上閱讀':'📖 Read Online'}
-          </a>
-          <a href="https://openlibrary.org/works/${b.id}" target="_blank" class="btn-secondary">
-            ${lang==='zh'?'在 Open Library 查看':'View on Open Library'}
+          <a href="${readUrl}" class="btn-primary">📖 ${lang==='zh'?'線上閱讀':'Read Online'}</a>
+          <a href="${gbUrl}" target="_blank" class="btn-secondary">
+            ${lang==='zh'?'在 Google Books 查看':'View on Google Books'}
           </a>
         </div>
         <div class="desc-section">
@@ -287,63 +282,54 @@ function renderDetail(b){
       </div>
     </div>
   </div>`;
-
-  document.getElementById('main-area').innerHTML = html;
 }
 
-function enrichDetail({desc, subjects}){
-  // Update description
+function enrichDetail({desc, subjects, cover}){
   const descEl = document.getElementById('book-desc');
-  if(descEl){
-    descEl.textContent = desc ||
-      (lang==='zh'?'本書收錄於 Open Library 免費電子書庫，可線上閱讀或借閱。':'This book is available in the Open Library free e-book collection.');
-  }
-  // Add subject tags
+  if(descEl) descEl.textContent = desc || (lang==='zh'?'本書收錄於 Google Books 免費電子書庫，可線上閱讀。':'This book is available free via Google Books.');
   const tagsEl = document.getElementById('subject-tags');
-  if(tagsEl && subjects.length){
-    tagsEl.innerHTML = subjects.slice(0,10).map(s=>`<span class="subject-tag">${s}</span>`).join('');
+  if(tagsEl && subjects.length) tagsEl.innerHTML = subjects.slice(0,8).map(s=>`<span class="subject-tag">${s}</span>`).join('');
+  if(cover){
+    const img = document.getElementById('detail-cover');
+    if(img) img.src = cover;
   }
 }
 
 async function loadRelated(b){
-  const query = b.author || b.title || 'classic';
+  const query = encodeURIComponent((b.author||b.title||'classic').split(' ').slice(0,3).join(' '));
   try{
-    const res = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=7&fields=key,title,author_name,cover_i,ia`);
+    const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&filter=free-ebooks&maxResults=7&printType=books`);
     const data = await res.json();
-    const others = (data.docs||[]).filter(r=>r.key!==`/works/${b.id}`).slice(0,6);
+    const others = (data.items||[]).filter(r=>r.id!==b.id).slice(0,6);
     if(!others.length) return;
 
     const section = document.createElement('div');
     section.className='related-section';
     section.innerHTML=`
       <div class="section-head">
-        <h3 data-zh="相關書籍" data-en="Related Books">${lang==='zh'?'相關書籍':'Related Books'}</h3>
+        <h3>${lang==='zh'?'相關書籍':'Related Books'}</h3>
       </div>
       <div class="rel-grid">
         ${others.map(rb=>{
-          const rc = rb.cover_i ? `https://covers.openlibrary.org/b/id/${rb.cover_i}-M.jpg` : '';
-          const ra = (rb.author_name||[])[0]||'';
-          const rt = (rb.title||'').length>40?(rb.title).substring(0,40)+'…':rb.title;
-          const rp = new URLSearchParams({id:(rb.key||'').replace('/works/',''),t:rb.title||'',a:ra,c:rb.cover_i||'',ia:(rb.ia||[])[0]||''});
+          const rv = rb.volumeInfo||{};
+          const rc = (rv.imageLinks?.thumbnail||'').replace('http:','https:');
+          const ra = (rv.authors||[])[0]||'';
+          const rt = (rv.title||'').length>40?(rv.title).slice(0,40)+'…':(rv.title||'');
+          const rr = (rb.accessInfo?.webReaderLink||'').replace('http:','https:');
+          const rp = new URLSearchParams({id:rb.id,t:rv.title||'',a:ra,cover:rc,y:(rv.publishedDate||'').slice(0,4),reader:rr});
           return `<div class="rel-card" onclick="location.href='book.html?${rp}'">
-            <div class="rel-cover">
-              ${rc ? `<img src="${rc}" alt="${rt}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=rel-cover-ph>📖</div>'>` : '<div class="rel-cover-ph">📖</div>'}
-            </div>
-            <div class="rel-body">
-              <div class="rel-title">${rt}</div>
-              <div class="rel-author">${ra}</div>
-            </div>
+            <div class="rel-cover">${rc?`<img src="${rc}" alt="${rt}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=rel-cover-ph>📖</div>'">`:'<div class="rel-cover-ph">📖</div>'}</div>
+            <div class="rel-body"><div class="rel-title">${rt}</div><div class="rel-author">${ra}</div></div>
           </div>`;
         }).join('')}
       </div>`;
     document.querySelector('.book-detail')?.after(section);
   }catch(e){}
 
-  // add footer
   const ft = document.createElement('footer');
   ft.innerHTML=`<span>© 崑山國際學校 富蘭克林圖書館</span>
-    <span><a href="catalog.html" data-zh="返回書庫" data-en="Back to Catalog">${lang==='zh'?'返回書庫':'Back to Catalog'}</a></span>
-    <span>Powered by <a href="https://www.gutenberg.org" target="_blank">Project Gutenberg</a></span>`;
+    <span><a href="catalog.html">${lang==='zh'?'返回書庫':'Back to Catalog'}</a></span>
+    <span>Powered by <a href="https://books.google.com" target="_blank">Google Books</a></span>`;
   document.body.appendChild(ft);
 }
 

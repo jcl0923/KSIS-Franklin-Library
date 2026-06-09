@@ -159,32 +159,31 @@ let lang = localStorage.getItem('ksisLang') || 'zh';
 window.addEventListener('DOMContentLoaded', () => {
   applyLang(lang);
 
-  const p   = new URLSearchParams(location.search);
-  const ia  = p.get('ia') || '';
-  const id  = p.get('id') || '';
+  const p      = new URLSearchParams(location.search);
+  const id     = p.get('id') || '';
   const title  = p.get('t') || (lang==='zh'?'閱讀':'Reading');
   const author = p.get('a') || '';
+  const cover  = p.get('cover') || '';
+  const year   = p.get('y') || '';
+  const readerLink = p.get('reader') || '';
 
   document.getElementById('bar-title').textContent  = title;
   document.getElementById('bar-author').textContent = author ? author + ' ·' : '';
   document.title = title + ' — 富蘭克林圖書館';
 
   // Build the back link (to book detail)
-  const backParams = new URLSearchParams({id, t:title, a:author, c:p.get('c')||'', ia, y:p.get('y')||''});
+  const backParams = new URLSearchParams({id, t:title, a:author, cover, y:year, reader:readerLink});
   document.getElementById('back-btn').href = `book.html?${backParams}`;
 
-  // Determine read URL
+  // Determine read URL — Google Books embedded viewer
   let readUrl = '';
-  if(ia){
-    // Internet Archive embed URL — designed for iframe use
-    readUrl = `https://archive.org/embed/${ia}?ui=embed`;
-  } else if(id){
-    // Open Library read page
-    readUrl = `https://openlibrary.org/works/${id}`;
+  if(id){
+    readUrl = `https://books.google.com/books?id=${id}&printsec=frontcover&output=embed`;
   }
+  const newTabUrl = readerLink || (id ? `https://books.google.com/books?id=${id}` : '#');
 
-  document.getElementById('newtab-btn').href = readUrl || '#';
-  document.getElementById('err-read-btn').href = readUrl || '#';
+  document.getElementById('newtab-btn').href = newTabUrl;
+  document.getElementById('err-read-btn').href = newTabUrl;
 
   if(!readUrl){
     showError();
