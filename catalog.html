@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -173,7 +174,7 @@ footer{position:relative;z-index:1;
 <!-- Header -->
 <header>
   <img class="hd-logo"
-       src="https://www.ksis.tn.edu.tw/var/file/0/1000/msys_1000_5429593_42058.png"
+       src="ksis-seal.png"
        alt="KSIS" onerror="this.style.display='none'">
   <div class="hd-name">
     <div class="hd-name-zh" id="hd-zh">富蘭克林圖書館</div>
@@ -184,6 +185,8 @@ footer{position:relative;z-index:1;
     <a href="about.html" data-zh="關於" data-en="About">關於</a>
     <a href="https://www.ksis.tn.edu.tw" target="_blank" data-zh="學校" data-en="School">學校</a>
   </nav>
+  <img src="ib-logo.png" alt="IB Candidacy"
+       style="width:30px;height:auto;flex-shrink:0;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));" onerror="this.style.display='none'">
   <div class="hd-sep"></div>
   <div class="user-info">
     <span class="lbl" data-zh="讀者：" data-en="Reader:">讀者：</span>
@@ -199,7 +202,7 @@ footer{position:relative;z-index:1;
 <!-- Banner -->
 <div class="banner">
   <img class="banner-portrait"
-       src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/FDR_1944_Color_Portrait.jpg/440px-FDR_1944_Color_Portrait.jpg"
+       src="https://upload.wikimedia.org/wikipedia/commons/4/42/FDR_1944_Color_Portrait.jpg"
        alt="FDR" onerror="this.style.display='none'">
   <div class="banner-text">
     <p class="banner-q">
@@ -471,23 +474,4 @@ function renderPagination(count){
     <button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>
       &#8592; ${lang==='zh'?'上一頁':'Prev'}
     </button>
-    <span class="pg-info">${label}</span>
-    <button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=total?'disabled':''}>
-      ${lang==='zh'?'下一頁':'Next'} &#8594;
-    </button>`;
-}
-
-function goPage(p){
-  currentPage = p;
-  window.scrollTo({top:0,behavior:'smooth'});
-  setTimeout(loadBooks, 300);
-}
-
-/* ── Logout ─────────────────────────────────── */
-function logout(){
-  sessionStorage.clear();
-  window.location.href='index.html';
-}
-</script>
-</body>
-</html>
+    <span 
