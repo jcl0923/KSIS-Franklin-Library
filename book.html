@@ -237,9 +237,12 @@ function renderDetail(b){
   const cover = b.covId
     ? `https://covers.openlibrary.org/b/id/${b.covId}-L.jpg`
     : '';
-  const readUrl = b.ia
-    ? `https://archive.org/details/${b.ia}`
-    : `https://openlibrary.org/works/${b.id}`;
+  // Build reader URL (stays within library site)
+  const readerParams = new URLSearchParams({
+    id: b.id, t: b.title, a: b.author,
+    c: b.covId, ia: b.ia, y: b.year
+  });
+  const readUrl = `reader.html?${readerParams}`;
 
   const coverHtml = cover
     ? `<img class="cover-img" src="${cover}" alt="${b.title.replace(/"/g,'')}"
@@ -270,8 +273,8 @@ function renderDetail(b){
         </div>
         <div class="subjects" id="subject-tags"></div>
         <div class="actions">
-          <a href="${readUrl}" target="_blank" class="btn-primary">
-            ${lang==='zh'?'線上閱讀':'Read Online'}
+          <a href="${readUrl}" class="btn-primary">
+            ${lang==='zh'?'📖 線上閱讀':'📖 Read Online'}
           </a>
           <a href="https://openlibrary.org/works/${b.id}" target="_blank" class="btn-secondary">
             ${lang==='zh'?'在 Open Library 查看':'View on Open Library'}
