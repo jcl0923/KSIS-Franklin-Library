@@ -192,27 +192,22 @@ window.addEventListener('DOMContentLoaded', async ()=>{
   const id     = p.get('id');
   const title  = p.get('t') || 'Untitled';
   const author = p.get('a') || '';
-  const cover  = p.get('cover') || '';
   const year   = p.get('y') || '';
-  const reader = p.get('reader') || '';
 
   if(!id){ showError(lang==='zh'?'找不到此書':'Book not found'); return; }
 
   document.getElementById('bc-title').textContent = title;
 
-  // Render immediately with URL param data
-  renderDetail({id, title, author, cover, year, reader, subjects:[], description:''});
+  const cover = `https://www.gutenberg.org/cache/epub/${id}/pg${id}.cover.medium.jpg`;
+  renderDetail({id, title, author, cover, year, subjects:[], description:''});
 
-  // Enrich from Google Books API
+  // Enrich from Open Library (lightweight works lookup)
   try{
-    const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${id}`);
+    const res = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(title+' '+author)}&limit=1&fields=description,subject`);
     if(res.ok){
       const data = await res.json();
-      const v = data.volumeInfo || {};
-      const desc = v.description || '';
-      const subjects = v.categories || [];
-      const richCover = (v.imageLinks?.large || v.imageLinks?.medium || v.imageLinks?.thumbnail || cover).replace('http:','https:');
-      enrichDetail({desc, subjects, cover: richCover});
+      const doc = (data.docs||[])[0] || {};
+      enrichDetail({desc: typeof doc.description==='object'?doc.description.value:(doc.description||''), subjects: doc.subject||[]});
     }
   }catch(e){}
 
@@ -234,12 +229,9 @@ function applyLang(l){
 }
 
 function renderDetail(b){
-  const readerParams = new URLSearchParams({
-    id: b.id, t: b.title, a: b.author,
-    cover: b.cover, y: b.year, reader: b.reader
-  });
-  const readUrl = `reader.html?${readerParams}`;
-  const gbUrl   = `https://books.google.com/books?id=${b.id}`;
+  const readerParams = new URLSearchParams({id:b.id, t:b.title, a:b.author, y:b.year});
+  const readUrl  = `reader.html?${readerParams}`;
+  const gutUrl   = `https://www.gutenberg.org/ebooks/${b.id}`;
 
   const coverHtml = b.cover
     ? `<img class="cover-img" id="detail-cover" src="${b.cover}" alt="${(b.title||'').replace(/"/g,'')}"
@@ -271,8 +263,8 @@ function renderDetail(b){
         <div class="subjects" id="subject-tags"></div>
         <div class="actions">
           <a href="${readUrl}" class="btn-primary">📖 ${lang==='zh'?'線上閱讀':'Read Online'}</a>
-          <a href="${gbUrl}" target="_blank" class="btn-secondary">
-            ${lang==='zh'?'在 Google Books 查看':'View on Google Books'}
+          <a href="${gutUrl}" target="_blank" class="btn-secondary">
+            ${lang==='zh'?'在 Gutenberg 查看':'View on Gutenberg'}
           </a>
         </div>
         <div class="desc-section">

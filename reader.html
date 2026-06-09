@@ -163,24 +163,18 @@ window.addEventListener('DOMContentLoaded', () => {
   const id     = p.get('id') || '';
   const title  = p.get('t') || (lang==='zh'?'閱讀':'Reading');
   const author = p.get('a') || '';
-  const cover  = p.get('cover') || '';
   const year   = p.get('y') || '';
-  const readerLink = p.get('reader') || '';
 
   document.getElementById('bar-title').textContent  = title;
-  document.getElementById('bar-author').textContent = author ? author + ' ·' : '';
+  document.getElementById('bar-author').textContent = author ? author + ' · ' : '';
   document.title = title + ' — 富蘭克林圖書館';
 
-  // Build the back link (to book detail)
-  const backParams = new URLSearchParams({id, t:title, a:author, cover, y:year, reader:readerLink});
+  const backParams = new URLSearchParams({id, t:title, a:author, y:year});
   document.getElementById('back-btn').href = `book.html?${backParams}`;
 
-  // Determine read URL — Google Books embedded viewer
-  let readUrl = '';
-  if(id){
-    readUrl = `https://books.google.com/books?id=${id}&printsec=frontcover&output=embed`;
-  }
-  const newTabUrl = readerLink || (id ? `https://books.google.com/books?id=${id}` : '#');
+  // Use Gutenberg HTML reader (many books have inline HTML)
+  const readUrl = id ? `https://www.gutenberg.org/files/${id}/${id}-h/${id}-h.htm` : '';
+  const newTabUrl = id ? `https://www.gutenberg.org/ebooks/${id}` : '#';
 
   document.getElementById('newtab-btn').href = newTabUrl;
   document.getElementById('err-read-btn').href = newTabUrl;

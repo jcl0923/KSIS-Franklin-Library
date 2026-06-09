@@ -269,48 +269,71 @@ footer{position:relative;z-index:1;
 </footer>
 
 <script>
-/* ── State ─────────────────────────────────── */
+/* ── State ───────────────────────────────────── */
 let lang = localStorage.getItem('ksisLang') || 'zh';
+let allBooks = [];
+let filtered = [];
 let currentPage = 1;
-let currentCat = CATS[0];
+let currentCatKey = '';
 let currentSearch = '';
-let totalCount = 0;
-const PER_PAGE = 20;
-const API = 'https://www.googleapis.com/books/v1/volumes';
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+const PER_PAGE = 24;
 
 const CATS = [
-  {zh:'全部',    en:'All',        q:'subject:fiction'},
-  {zh:'冒險',    en:'Adventure',  q:'subject:adventure'},
-  {zh:'經典文學',en:'Literature', q:'subject:literature'},
-  {zh:'推理懸疑',en:'Mystery',    q:'subject:mystery'},
-  {zh:'歷史',    en:'History',    q:'subject:history'},
-  {zh:'科學',    en:'Science',    q:'subject:science'},
-  {zh:'詩歌',    en:'Poetry',     q:'subject:poetry'},
-  {zh:'傳記',    en:'Biography',  q:'subject:biography'},
-  {zh:'哲學',    en:'Philosophy', q:'subject:philosophy'},
-  {zh:'戲劇',    en:'Drama',      q:'subject:drama'},
-  {zh:'兒童',    en:'Children',   q:'subject:juvenile fiction'},
-  {zh:'旅遊',    en:'Travel',     q:'subject:travel'},
+  {zh:'全部',    en:'All',      key:''},
+  {zh:'文學',    en:'Lit',      key:'lit'},
+  {zh:'冒險',    en:'Adventure',key:'adventure'},
+  {zh:'推理',    en:'Mystery',  key:'mystery'},
+  {zh:'歷史',    en:'History',  key:'history'},
+  {zh:'科學',    en:'Science',  key:'science'},
+  {zh:'詩歌',    en:'Poetry',   key:'poetry'},
+  {zh:'傳記',    en:'Biography',key:'biography'},
+  {zh:'哲學',    en:'Philosophy',key:'philosophy'},
+  {zh:'戲劇',    en:'Drama',    key:'drama'},
+  {zh:'兒童',    en:'Children', key:'children'},
 ];
 
-/* ── Init ──────────────────────────────────── */
-window.addEventListener('DOMContentLoaded', () => {
-  const u = sessionStorage.getItem('ksisUser');
-  document.getElementById('uname').textContent = u || '—';
+/* ── Init ────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('uname').textContent = sessionStorage.getItem('ksisUser') || '—';
   applyLang(lang);
   buildCats();
-  loadBooks();
+  await loadLibrary();
 });
 
-/* ── Language ──────────────────────────────── */
+/* ── Load static JSON ────────────────────────── */
+async function loadLibrary(){
+  const area = document.getElementById('book-area');
+  try {
+    const res = await fetch('books.json');
+    const data = await res.json();
+    allBooks = data.books || [];
+    document.getElementById('total-count').textContent = allBooks.length + '+';
+    applyFilter();
+  } catch(e) {
+    area.innerHTML = `<div class="error"><div class="error-icon">⚠️</div>
+      <p>${lang==='zh'?'書庫載入失敗，請重新整理。':'Failed to load library. Please refresh.'}</p></div>`;
+  }
+}
+
+/* ── Filter + Search ─────────────────────────── */
+function applyFilter(){
+  const q = currentSearch.toLowerCase();
+  filtered = allBooks.filter(b => {
+    const catOk = !currentCatKey || b.cat === currentCatKey;
+    const searchOk = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
+    return catOk && searchOk;
+  });
+  currentPage = 1;
+  renderPage();
+}
+
+/* ── Language ────────────────────────────────── */
 function setLang(l){
   lang = l;
   localStorage.setItem('ksisLang', l);
   applyLang(l);
-  buildCats(); // rebuild to update labels
+  buildCats();
 }
-
 function applyLang(l){
   document.getElementById('btn-zh').classList.toggle('active', l==='zh');
   document.getElementById('btn-en').classList.toggle('active', l==='en');
@@ -321,195 +344,91 @@ function applyLang(l){
   document.querySelectorAll('.zh-t').forEach(el=>el.style.display=l==='zh'?'':'none');
   document.querySelectorAll('.en-t').forEach(el=>el.style.display=l==='en'?'':'none');
   document.getElementById('search-input').placeholder =
-    l==='zh' ? '搜尋書名、作者 / Search titles, authors…' : 'Search titles, authors…';
+    l==='zh' ? '搜尋書名、作者…' : 'Search titles, authors…';
 }
 
-/* ── Categories ─────────────────────────────── */
+/* ── Categories ──────────────────────────────── */
 function buildCats(){
-  const el = document.getElementById('cats');
-  el.innerHTML = CATS.map((c,i)=>`
-    <button class="cat-btn${c.q===currentCat.q?' active':''}"
-            onclick="selectCat(${i})">
-      ${lang==='zh'?c.zh:c.en}
-    </button>`).join('');
+  document.getElementById('cats').innerHTML = CATS.map((c,i)=>
+    `<button class="cat-btn${c.key===currentCatKey?' active':''}" onclick="selectCat('${c.key}')">
+       ${lang==='zh'?c.zh:c.en}
+     </button>`).join('');
 }
-
-function selectCat(i){
-  currentCat = CATS[i];
-  currentPage = 1;
+function selectCat(key){
+  currentCatKey = key;
   currentSearch = '';
   document.getElementById('search-input').value = '';
   buildCats();
-  loadBooks();
+  applyFilter();
 }
 
-/* ── Search ─────────────────────────────────── */
+/* ── Search ──────────────────────────────────── */
 function doSearch(){
-  const q = document.getElementById('search-input').value.trim();
-  if(!q) return;
-  currentSearch = q;
-  currentPage = 1;
-  currentCat = CATS[0];
+  currentSearch = document.getElementById('search-input').value.trim();
+  currentCatKey = '';
   buildCats();
-  loadBooks();
+  applyFilter();
 }
 
-/* ── Cache helpers ──────────────────────────── */
-function cacheKey(q, page){ return `ksis_books_${btoa(q+page)}`; }
-function fromCache(key){
-  try{
-    const raw = localStorage.getItem(key);
-    if(!raw) return null;
-    const {ts, data} = JSON.parse(raw);
-    if(Date.now()-ts > CACHE_TTL){ localStorage.removeItem(key); return null; }
-    return data;
-  }catch(e){ return null; }
-}
-function toCache(key, data){
-  try{ localStorage.setItem(key, JSON.stringify({ts:Date.now(), data})); }catch(e){}
-}
-
-/* ── Skeleton loader ────────────────────────── */
-function showSkeletons(area){
-  const sk = Array(PER_PAGE).fill(`
-    <div class="book-card" style="pointer-events:none">
-      <div class="cover-wrap" style="background:rgba(255,255,255,.06);animation:pulse 1.4s ease infinite"></div>
-      <div class="card-body">
-        <div style="height:12px;background:rgba(255,255,255,.06);border-radius:3px;margin-bottom:8px;animation:pulse 1.4s ease infinite"></div>
-        <div style="height:10px;width:60%;background:rgba(255,255,255,.04);border-radius:3px;animation:pulse 1.4s ease infinite"></div>
-      </div>
-    </div>`).join('');
-  area.innerHTML = `<style>@keyframes pulse{0%,100%{opacity:.4}50%{opacity:.9}}</style><div class="book-grid">${sk}</div>`;
-}
-
-/* ── Load Books ─────────────────────────────── */
-async function loadBooks(){
+/* ── Render ──────────────────────────────────── */
+function renderPage(){
   const area = document.getElementById('book-area');
-  document.getElementById('pagination').style.display='none';
+  const total = filtered.length;
+  const start = (currentPage-1)*PER_PAGE;
+  const page  = filtered.slice(start, start+PER_PAGE);
 
-  const q = currentSearch || currentCat.q;
-  const ck = cacheKey(q, currentPage);
-  const cached = fromCache(ck);
-
-  if(cached){
-    updateResultsInfo(cached.count);
-    renderBooks(cached.items, area);
-    renderPagination(cached.count);
-    return;
-  }
-
-  showSkeletons(area);
-
-  const params = new URLSearchParams({
-    q,
-    maxResults: PER_PAGE,
-    startIndex: (currentPage-1)*PER_PAGE,
-    printType: 'books',
-    orderBy: 'relevance'
-  });
-
-  try{
-    const controller = new AbortController();
-    const timer = setTimeout(()=>controller.abort(), 12000);
-    const res = await fetch(`${API}?${params}`, {signal: controller.signal});
-    clearTimeout(timer);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data = await res.json();
-    const count = Math.min(data.totalItems||0, 1000);
-    totalCount = count;
-    const items = data.items || [];
-    toCache(ck, {count, items});
-    updateResultsInfo(count);
-    renderBooks(items, area);
-    renderPagination(count);
-  }catch(err){
-    const isTimeout = err.name==='AbortError';
-    area.innerHTML=`<div class="error">
-      <div class="error-icon">⚠️</div>
-      <p>${lang==='zh'
-        ? (isTimeout?'書庫連線逾時，請重新整理頁面再試。':'無法連接書庫，請檢查網路連線。')
-        : (isTimeout?'Connection timed out. Please refresh and try again.':'Could not reach the library. Please check your connection.')
-      }</p>
-      <button onclick="loadBooks()" style="margin-top:16px;padding:10px 24px;background:var(--gold);color:var(--navy);border:none;border-radius:3px;cursor:pointer;font:inherit;font-size:.88rem;">${lang==='zh'?'重新載入':'Reload'}</button>
-    </div>`;
-  }
-}
-
-function updateResultsInfo(count){
-  const start = (currentPage-1)*PER_PAGE+1;
-  const end   = Math.min(currentPage*PER_PAGE, count);
   const el = document.getElementById('results-info');
   el.textContent = lang==='zh'
-    ? `顯示第 ${start}–${end} 筆，共 ${count.toLocaleString()}+ 冊`
-    : `Showing ${start}–${end} of ${count.toLocaleString()}+ books`;
-  document.getElementById('total-count').textContent = count.toLocaleString()+'+';
-}
+    ? `顯示第 ${start+1}–${Math.min(start+PER_PAGE,total)} 筆，共 ${total} 冊`
+    : `Showing ${start+1}–${Math.min(start+PER_PAGE,total)} of ${total} books`;
 
-/* ── Render Books ───────────────────────────── */
-function renderBooks(items, area){
-  if(!items||!items.length){
+  if(!page.length){
     area.innerHTML=`<div class="empty"><div class="empty-icon">📚</div>
-      <p>${lang==='zh'?'查無相符書籍，請嘗試其他關鍵字。':'No books found. Try a different search.'}</p></div>`;
+      <p>${lang==='zh'?'查無相符書籍':'No books found'}</p></div>`;
+    document.getElementById('pagination').style.display='none';
     return;
   }
 
-  const cards = items.map(item=>{
-    const v = item.volumeInfo || {};
-    const title  = (v.title||'Untitled').replace(/"/g,'&quot;');
-    const author = (v.authors||[])[0] || (lang==='zh'?'佚名':'Unknown');
-    const year   = (v.publishedDate||'').slice(0,4);
-    const cover  = (v.imageLinks?.thumbnail||'').replace('http:','https:');
-    const shortTitle = title.length>55 ? title.slice(0,55)+'…' : title;
-    const reader = (item.accessInfo?.webReaderLink||'').replace('http:','https:');
-
-    const p = new URLSearchParams({
-      id: item.id, t: v.title||'', a: author,
-      cover: cover, y: year, reader: reader
-    });
-
-    return `<div class="book-card" onclick="location.href='book.html?${p}'"
-            title="${title}">
+  area.innerHTML=`<div class="book-grid">${page.map(b=>{
+    const cover=`https://www.gutenberg.org/cache/epub/${b.id}/pg${b.id}.cover.medium.jpg`;
+    const short=b.title.length>50?b.title.slice(0,50)+'…':b.title;
+    const p=new URLSearchParams({id:b.id,t:b.title,a:b.author,y:b.year||''});
+    return `<div class="book-card" onclick="location.href='book.html?${p}'" title="${b.title.replace(/"/g,'&quot;')}">
       <div class="cover-wrap">
-        ${cover
-          ? `<img src="${cover}" alt="${shortTitle}" loading="lazy"
-               onerror="this.parentNode.innerHTML='<div class=cover-placeholder>📖<span>${(v.language||'en').toUpperCase()}</span></div>'">`
-          : `<div class="cover-placeholder">📖<span>${(v.language||'en').toUpperCase()}</span></div>`}
+        <img src="${cover}" alt="${short}" loading="lazy"
+             onerror="this.parentNode.innerHTML='<div class=cover-placeholder>📖<span>${b.author.split(' ').pop()}</span></div>'">
       </div>
       <div class="card-body">
-        <div class="card-title">${shortTitle}</div>
-        <div class="card-author">${author}</div>
+        <div class="card-title">${short}</div>
+        <div class="card-author">${b.author}</div>
         <div class="card-foot">
-          <span class="lang-badge">${(v.language||'en').toUpperCase()}</span>
-          <span class="dl-count">${year}</span>
+          <span class="lang-badge">EN</span>
+          <span class="dl-count">${b.year||''}</span>
         </div>
       </div>
     </div>`;
-  }).join('');
+  }).join('')}</div>`;
 
-  area.innerHTML = `<div class="book-grid">${cards}</div>`;
+  renderPagination(total);
 }
 
-/* ── Pagination ─────────────────────────────── */
-function renderPagination(count){
-  const total = Math.ceil(count/PER_PAGE);
-  if(total<=1){document.getElementById('pagination').style.display='none';return;}
-
-  const el = document.getElementById('pagination');
-  el.style.display='flex';
-  const label = lang==='zh' ? `第 ${currentPage} 頁，共 ${total.toLocaleString()} 頁` : `Page ${currentPage} of ${total.toLocaleString()}`;
-  el.innerHTML=`
+/* ── Pagination ──────────────────────────────── */
+function renderPagination(total){
+  const pages = Math.ceil(total/PER_PAGE);
+  const pg = document.getElementById('pagination');
+  if(pages<=1){pg.style.display='none';return;}
+  pg.style.display='flex';
+  const label=lang==='zh'?`第 ${currentPage} 頁，共 ${pages} 頁`:`Page ${currentPage} of ${pages}`;
+  pg.innerHTML=`
     <button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>
-      &#8592; ${lang==='zh'?'上一頁':'Prev'}
-    </button>
+      ← ${lang==='zh'?'上一頁':'Prev'}</button>
     <span class="pg-info">${label}</span>
-    <button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=total?'disabled':''}>
-      ${lang==='zh'?'下一頁':'Next'} &#8594;
-    </button>`;
+    <button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=pages?'disabled':''}>
+      ${lang==='zh'?'下一頁':'Next'} →</button>`;
 }
-
 function goPage(p){
-  currentPage = p;
-  loadBooks();
+  currentPage=p;
+  renderPage();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 

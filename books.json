@@ -1,0 +1,1377 @@
+{
+  "total": 196,
+  "books": [
+    {
+      "id": 86,
+      "title": "A Connecticut Yankee in King Arthur's Court",
+      "author": "Mark Twain",
+      "year": 1889,
+      "cat": "adventure"
+    },
+    {
+      "id": 76,
+      "title": "Adventures of Huckleberry Finn",
+      "author": "Mark Twain",
+      "year": 1884,
+      "cat": "adventure"
+    },
+    {
+      "id": 103,
+      "title": "Around the World in Eighty Days",
+      "author": "Jules Verne",
+      "year": 1872,
+      "cat": "adventure"
+    },
+    {
+      "id": 521,
+      "title": "Gulliver's Travels",
+      "author": "Jonathan Swift",
+      "year": 1726,
+      "cat": "adventure"
+    },
+    {
+      "id": 4300,
+      "title": "Ivanhoe",
+      "author": "Sir Walter Scott",
+      "year": 1820,
+      "cat": "adventure"
+    },
+    {
+      "id": 18857,
+      "title": "Journey to the Center of the Earth",
+      "author": "Jules Verne",
+      "year": 1864,
+      "cat": "adventure"
+    },
+    {
+      "id": 421,
+      "title": "Kidnapped",
+      "author": "Robert Louis Stevenson",
+      "year": 1886,
+      "cat": "adventure"
+    },
+    {
+      "id": 1153,
+      "title": "Martin Eden",
+      "author": "Jack London",
+      "year": 1909,
+      "cat": "adventure"
+    },
+    {
+      "id": 10907,
+      "title": "Michael Strogoff",
+      "author": "Jules Verne",
+      "year": 1876,
+      "cat": "adventure"
+    },
+    {
+      "id": 9830,
+      "title": "Rob Roy",
+      "author": "Sir Walter Scott",
+      "year": 1817,
+      "cat": "adventure"
+    },
+    {
+      "id": 2097,
+      "title": "Robinson Crusoe",
+      "author": "Daniel Defoe",
+      "year": 1719,
+      "cat": "adventure"
+    },
+    {
+      "id": 74,
+      "title": "The Adventures of Tom Sawyer",
+      "author": "Mark Twain",
+      "year": 1876,
+      "cat": "adventure"
+    },
+    {
+      "id": 910,
+      "title": "The Call of the Wild",
+      "author": "Jack London",
+      "year": 1903,
+      "cat": "adventure"
+    },
+    {
+      "id": 236,
+      "title": "The Count of Monte Cristo",
+      "author": "Alexandre Dumas",
+      "year": 1844,
+      "cat": "adventure"
+    },
+    {
+      "id": 5230,
+      "title": "The Invisible Man",
+      "author": "H.G. Wells",
+      "year": 1897,
+      "cat": "adventure"
+    },
+    {
+      "id": 3526,
+      "title": "The Invisible Man",
+      "author": "H.G. Wells",
+      "year": 1897,
+      "cat": "adventure"
+    },
+    {
+      "id": 2036,
+      "title": "The Iron Heel",
+      "author": "Jack London",
+      "year": 1908,
+      "cat": "adventure"
+    },
+    {
+      "id": 2814,
+      "title": "The Island of Doctor Moreau",
+      "author": "H.G. Wells",
+      "year": 1896,
+      "cat": "adventure"
+    },
+    {
+      "id": 139,
+      "title": "The Lost World",
+      "author": "Arthur Conan Doyle",
+      "year": 1912,
+      "cat": "adventure"
+    },
+    {
+      "id": 1184,
+      "title": "The Man in the Iron Mask",
+      "author": "Alexandre Dumas",
+      "year": 1848,
+      "cat": "adventure"
+    },
+    {
+      "id": 83,
+      "title": "The Mysterious Island",
+      "author": "Jules Verne",
+      "year": 1875,
+      "cat": "adventure"
+    },
+    {
+      "id": 11231,
+      "title": "The Scarlet Pimpernel",
+      "author": "Baroness Orczy",
+      "year": 1905,
+      "cat": "adventure"
+    },
+    {
+      "id": 1695,
+      "title": "The Sea-Wolf",
+      "author": "Jack London",
+      "year": 1904,
+      "cat": "adventure"
+    },
+    {
+      "id": 829,
+      "title": "The Swiss Family Robinson",
+      "author": "Johann David Wyss",
+      "year": 1812,
+      "cat": "adventure"
+    },
+    {
+      "id": 1257,
+      "title": "The Three Musketeers",
+      "author": "Alexandre Dumas",
+      "year": 1844,
+      "cat": "adventure"
+    },
+    {
+      "id": 1268,
+      "title": "The Time Machine",
+      "author": "H.G. Wells",
+      "year": 1895,
+      "cat": "adventure"
+    },
+    {
+      "id": 35,
+      "title": "The Time Machine",
+      "author": "H.G. Wells",
+      "year": 1895,
+      "cat": "adventure"
+    },
+    {
+      "id": 36,
+      "title": "The War of the Worlds",
+      "author": "H.G. Wells",
+      "year": 1898,
+      "cat": "adventure"
+    },
+    {
+      "id": 120,
+      "title": "Treasure Island",
+      "author": "Robert Louis Stevenson",
+      "year": 1883,
+      "cat": "adventure"
+    },
+    {
+      "id": 164,
+      "title": "Twenty Thousand Leagues Under the Sea",
+      "author": "Jules Verne",
+      "year": 1870,
+      "cat": "adventure"
+    },
+    {
+      "id": 19,
+      "title": "Twenty Years After",
+      "author": "Alexandre Dumas",
+      "year": 1845,
+      "cat": "adventure"
+    },
+    {
+      "id": 1074,
+      "title": "White Fang",
+      "author": "Jack London",
+      "year": 1906,
+      "cat": "adventure"
+    },
+    {
+      "id": 2365,
+      "title": "Autobiography of Mark Twain",
+      "author": "Mark Twain",
+      "year": 1917,
+      "cat": "biography"
+    },
+    {
+      "id": 3207,
+      "title": "Lincoln's Second Inaugural Address",
+      "author": "Abraham Lincoln",
+      "year": 1865,
+      "cat": "biography"
+    },
+    {
+      "id": 6761,
+      "title": "Meditations",
+      "author": "Marcus Aurelius",
+      "year": 180,
+      "cat": "biography"
+    },
+    {
+      "id": 17921,
+      "title": "My Bondage and My Freedom",
+      "author": "Frederick Douglass",
+      "year": 1855,
+      "cat": "biography"
+    },
+    {
+      "id": 14102,
+      "title": "Parallel Lives",
+      "author": "Plutarch",
+      "year": 100,
+      "cat": "biography"
+    },
+    {
+      "id": 4363,
+      "title": "The Autobiography of Benjamin Franklin",
+      "author": "Benjamin Franklin",
+      "year": 1791,
+      "cat": "biography"
+    },
+    {
+      "id": 1935,
+      "title": "The Life of Abraham Lincoln",
+      "author": "Henry Ketcham",
+      "year": 1901,
+      "cat": "biography"
+    },
+    {
+      "id": 1044,
+      "title": "The Story of My Experiments with Truth",
+      "author": "Mahatma Gandhi",
+      "year": 1927,
+      "cat": "biography"
+    },
+    {
+      "id": 17596,
+      "title": "The Story of My Life",
+      "author": "Helen Keller",
+      "year": 1903,
+      "cat": "biography"
+    },
+    {
+      "id": 2801,
+      "title": "A Little Princess",
+      "author": "Frances Hodgson Burnett",
+      "year": 1905,
+      "cat": "children"
+    },
+    {
+      "id": 11,
+      "title": "Alice's Adventures in Wonderland",
+      "author": "Lewis Carroll",
+      "year": 1865,
+      "cat": "children"
+    },
+    {
+      "id": 26063,
+      "title": "Anne of Green Gables",
+      "author": "L.M. Montgomery",
+      "year": 1908,
+      "cat": "children"
+    },
+    {
+      "id": 51,
+      "title": "Anne of the Island",
+      "author": "L.M. Montgomery",
+      "year": 1915,
+      "cat": "children"
+    },
+    {
+      "id": 5765,
+      "title": "Black Beauty",
+      "author": "Anna Sewell",
+      "year": 1877,
+      "cat": "children"
+    },
+    {
+      "id": 982,
+      "title": "Five Little Peppers and How They Grew",
+      "author": "Margaret Sidney",
+      "year": 1881,
+      "cat": "children"
+    },
+    {
+      "id": 9030,
+      "title": "Heidi",
+      "author": "Johanna Spyri",
+      "year": 1881,
+      "cat": "children"
+    },
+    {
+      "id": 37106,
+      "title": "Little Men",
+      "author": "Louisa May Alcott",
+      "year": 1871,
+      "cat": "children"
+    },
+    {
+      "id": 16,
+      "title": "Peter Pan",
+      "author": "J.M. Barrie",
+      "year": 1904,
+      "cat": "children"
+    },
+    {
+      "id": 23765,
+      "title": "Pinocchio",
+      "author": "Carlo Collodi",
+      "year": 1883,
+      "cat": "children"
+    },
+    {
+      "id": 8164,
+      "title": "Pollyanna",
+      "author": "Eleanor H. Porter",
+      "year": 1913,
+      "cat": "children"
+    },
+    {
+      "id": 5348,
+      "title": "Rebecca of Sunnybrook Farm",
+      "author": "Kate Douglas Wiggin",
+      "year": 1903,
+      "cat": "children"
+    },
+    {
+      "id": 19994,
+      "title": "The Blue Fairy Book",
+      "author": "Andrew Lang",
+      "year": 1889,
+      "cat": "children"
+    },
+    {
+      "id": 2806,
+      "title": "The Jungle Book",
+      "author": "Rudyard Kipling",
+      "year": 1894,
+      "cat": "children"
+    },
+    {
+      "id": 4751,
+      "title": "The Second Jungle Book",
+      "author": "Rudyard Kipling",
+      "year": 1895,
+      "cat": "children"
+    },
+    {
+      "id": 113,
+      "title": "The Secret Garden",
+      "author": "Frances Hodgson Burnett",
+      "year": 1911,
+      "cat": "children"
+    },
+    {
+      "id": 28885,
+      "title": "The Wind in the Willows",
+      "author": "Kenneth Grahame",
+      "year": 1908,
+      "cat": "children"
+    },
+    {
+      "id": 1842,
+      "title": "The Wonderful Wizard of Oz",
+      "author": "L. Frank Baum",
+      "year": 1900,
+      "cat": "children"
+    },
+    {
+      "id": 12,
+      "title": "Through the Looking-Glass",
+      "author": "Lewis Carroll",
+      "year": 1871,
+      "cat": "children"
+    },
+    {
+      "id": 2296,
+      "title": "A Doll's House",
+      "author": "Henrik Ibsen",
+      "year": 1879,
+      "cat": "drama"
+    },
+    {
+      "id": 1517,
+      "title": "A Midsummer Night's Dream",
+      "author": "William Shakespeare",
+      "year": 1600,
+      "cat": "drama"
+    },
+    {
+      "id": 1529,
+      "title": "Antony and Cleopatra",
+      "author": "William Shakespeare",
+      "year": 1606,
+      "cat": "drama"
+    },
+    {
+      "id": 2892,
+      "title": "Arms and the Man",
+      "author": "George Bernard Shaw",
+      "year": 1894,
+      "cat": "drama"
+    },
+    {
+      "id": 6593,
+      "title": "Faust",
+      "author": "Johann Wolfgang von Goethe",
+      "year": 1808,
+      "cat": "drama"
+    },
+    {
+      "id": 4612,
+      "title": "Ghosts",
+      "author": "Henrik Ibsen",
+      "year": 1881,
+      "cat": "drama"
+    },
+    {
+      "id": 2261,
+      "title": "Hamlet",
+      "author": "William Shakespeare",
+      "year": 1603,
+      "cat": "drama"
+    },
+    {
+      "id": 7700,
+      "title": "Hedda Gabler",
+      "author": "Henrik Ibsen",
+      "year": 1890,
+      "cat": "drama"
+    },
+    {
+      "id": 1522,
+      "title": "Julius Caesar",
+      "author": "William Shakespeare",
+      "year": 1623,
+      "cat": "drama"
+    },
+    {
+      "id": 2268,
+      "title": "King Lear",
+      "author": "William Shakespeare",
+      "year": 1606,
+      "cat": "drama"
+    },
+    {
+      "id": 27761,
+      "title": "Macbeth",
+      "author": "William Shakespeare",
+      "year": 1606,
+      "cat": "drama"
+    },
+    {
+      "id": 1524,
+      "title": "Othello",
+      "author": "William Shakespeare",
+      "year": 1603,
+      "cat": "drama"
+    },
+    {
+      "id": 5763,
+      "title": "Pygmalion",
+      "author": "George Bernard Shaw",
+      "year": 1913,
+      "cat": "drama"
+    },
+    {
+      "id": 1513,
+      "title": "Romeo and Juliet",
+      "author": "William Shakespeare",
+      "year": 1597,
+      "cat": "drama"
+    },
+    {
+      "id": 2082,
+      "title": "The Cherry Orchard",
+      "author": "Anton Chekhov",
+      "year": 1904,
+      "cat": "drama"
+    },
+    {
+      "id": 100,
+      "title": "The Complete Works of William Shakespeare",
+      "author": "William Shakespeare",
+      "year": 1623,
+      "cat": "drama"
+    },
+    {
+      "id": 42671,
+      "title": "The Importance of Being Earnest",
+      "author": "Oscar Wilde",
+      "year": 1895,
+      "cat": "drama"
+    },
+    {
+      "id": 1041,
+      "title": "The Merchant of Venice",
+      "author": "William Shakespeare",
+      "year": 1600,
+      "cat": "drama"
+    },
+    {
+      "id": 10001,
+      "title": "The Seagull",
+      "author": "Anton Chekhov",
+      "year": 1896,
+      "cat": "drama"
+    },
+    {
+      "id": 1531,
+      "title": "The Tempest",
+      "author": "William Shakespeare",
+      "year": 1611,
+      "cat": "drama"
+    },
+    {
+      "id": 7986,
+      "title": "Three Sisters",
+      "author": "Anton Chekhov",
+      "year": 1901,
+      "cat": "drama"
+    },
+    {
+      "id": 2235,
+      "title": "Twelfth Night",
+      "author": "William Shakespeare",
+      "year": 1601,
+      "cat": "drama"
+    },
+    {
+      "id": 1998,
+      "title": "Uncle Vanya",
+      "author": "Anton Chekhov",
+      "year": 1898,
+      "cat": "drama"
+    },
+    {
+      "id": 14975,
+      "title": "Common Sense",
+      "author": "Thomas Paine",
+      "year": 1776,
+      "cat": "history"
+    },
+    {
+      "id": 17921,
+      "title": "Democracy in America",
+      "author": "Alexis de Tocqueville",
+      "year": 1835,
+      "cat": "history"
+    },
+    {
+      "id": 6130,
+      "title": "History of the Peloponnesian War",
+      "author": "Thucydides",
+      "year": -400,
+      "cat": "history"
+    },
+    {
+      "id": 54829,
+      "title": "Narrative of Sojourner Truth",
+      "author": "Sojourner Truth",
+      "year": 1850,
+      "cat": "history"
+    },
+    {
+      "id": 25344,
+      "title": "Narrative of the Life of Frederick Douglass",
+      "author": "Frederick Douglass",
+      "year": 1845,
+      "cat": "history"
+    },
+    {
+      "id": 5740,
+      "title": "Personal Memoirs of Ulysses S. Grant",
+      "author": "Ulysses S. Grant",
+      "year": 1885,
+      "cat": "history"
+    },
+    {
+      "id": 14975,
+      "title": "Rights of Man",
+      "author": "Thomas Paine",
+      "year": 1791,
+      "cat": "history"
+    },
+    {
+      "id": 2680,
+      "title": "The Art of War",
+      "author": "Sun Tzu",
+      "year": -500,
+      "cat": "history"
+    },
+    {
+      "id": 3296,
+      "title": "The Communist Manifesto",
+      "author": "Karl Marx",
+      "year": 1848,
+      "cat": "history"
+    },
+    {
+      "id": 2181,
+      "title": "The Decline and Fall of the Roman Empire",
+      "author": "Edward Gibbon",
+      "year": 1776,
+      "cat": "history"
+    },
+    {
+      "id": 16780,
+      "title": "The Federalist Papers",
+      "author": "Alexander Hamilton",
+      "year": 1788,
+      "cat": "history"
+    },
+    {
+      "id": 11884,
+      "title": "The Gallic Wars",
+      "author": "Julius Caesar",
+      "year": -50,
+      "cat": "history"
+    },
+    {
+      "id": 13455,
+      "title": "The Histories",
+      "author": "Herodotus",
+      "year": -430,
+      "cat": "history"
+    },
+    {
+      "id": 2130,
+      "title": "The Life of Julius Caesar",
+      "author": "Plutarch",
+      "year": 100,
+      "cat": "history"
+    },
+    {
+      "id": 14102,
+      "title": "The Lives of the Twelve Caesars",
+      "author": "Suetonius",
+      "year": 121,
+      "cat": "history"
+    },
+    {
+      "id": 1232,
+      "title": "The Prince",
+      "author": "Niccolò Machiavelli",
+      "year": 1532,
+      "cat": "history"
+    },
+    {
+      "id": 4081,
+      "title": "The Social Contract",
+      "author": "Jean-Jacques Rousseau",
+      "year": 1762,
+      "cat": "history"
+    },
+    {
+      "id": 7100,
+      "title": "The Souls of Black Folk",
+      "author": "W.E.B. Du Bois",
+      "year": 1903,
+      "cat": "history"
+    },
+    {
+      "id": 4655,
+      "title": "Two Treatises of Government",
+      "author": "John Locke",
+      "year": 1689,
+      "cat": "history"
+    },
+    {
+      "id": 11030,
+      "title": "Up From Slavery",
+      "author": "Booker T. Washington",
+      "year": 1901,
+      "cat": "history"
+    },
+    {
+      "id": 46,
+      "title": "A Christmas Carol",
+      "author": "Charles Dickens",
+      "year": 1843,
+      "cat": "lit"
+    },
+    {
+      "id": 98,
+      "title": "A Tale of Two Cities",
+      "author": "Charles Dickens",
+      "year": 1859,
+      "cat": "lit"
+    },
+    {
+      "id": 1399,
+      "title": "Anna Karenina",
+      "author": "Leo Tolstoy",
+      "year": 1877,
+      "cat": "lit"
+    },
+    {
+      "id": 526,
+      "title": "Ben-Hur: A Tale of the Christ",
+      "author": "Lew Wallace",
+      "year": 1880,
+      "cat": "lit"
+    },
+    {
+      "id": 1023,
+      "title": "Bleak House",
+      "author": "Charles Dickens",
+      "year": 1852,
+      "cat": "lit"
+    },
+    {
+      "id": 2554,
+      "title": "Crime and Punishment",
+      "author": "Fyodor Dostoevsky",
+      "year": 1866,
+      "cat": "lit"
+    },
+    {
+      "id": 201,
+      "title": "Daisy Miller",
+      "author": "Henry James",
+      "year": 1878,
+      "cat": "lit"
+    },
+    {
+      "id": 766,
+      "title": "David Copperfield",
+      "author": "Charles Dickens",
+      "year": 1850,
+      "cat": "lit"
+    },
+    {
+      "id": 967,
+      "title": "Dombey and Son",
+      "author": "Charles Dickens",
+      "year": 1846,
+      "cat": "lit"
+    },
+    {
+      "id": 996,
+      "title": "Don Quixote",
+      "author": "Miguel de Cervantes",
+      "year": 1605,
+      "cat": "lit"
+    },
+    {
+      "id": 345,
+      "title": "Dracula",
+      "author": "Bram Stoker",
+      "year": 1897,
+      "cat": "lit"
+    },
+    {
+      "id": 158,
+      "title": "Emma",
+      "author": "Jane Austen",
+      "year": 1815,
+      "cat": "lit"
+    },
+    {
+      "id": 84,
+      "title": "Frankenstein",
+      "author": "Mary Shelley",
+      "year": 1818,
+      "cat": "lit"
+    },
+    {
+      "id": 1400,
+      "title": "Great Expectations",
+      "author": "Charles Dickens",
+      "year": 1861,
+      "cat": "lit"
+    },
+    {
+      "id": 1392,
+      "title": "Hard Times",
+      "author": "Charles Dickens",
+      "year": 1854,
+      "cat": "lit"
+    },
+    {
+      "id": 1260,
+      "title": "Jane Eyre",
+      "author": "Charlotte Brontë",
+      "year": 1847,
+      "cat": "lit"
+    },
+    {
+      "id": 135,
+      "title": "Les Misérables",
+      "author": "Victor Hugo",
+      "year": 1862,
+      "cat": "lit"
+    },
+    {
+      "id": 514,
+      "title": "Little Women",
+      "author": "Louisa May Alcott",
+      "year": 1868,
+      "cat": "lit"
+    },
+    {
+      "id": 4280,
+      "title": "Madame Bovary",
+      "author": "Gustave Flaubert",
+      "year": 1856,
+      "cat": "lit"
+    },
+    {
+      "id": 2996,
+      "title": "Maggie: A Girl of the Streets",
+      "author": "Stephen Crane",
+      "year": 1893,
+      "cat": "lit"
+    },
+    {
+      "id": 141,
+      "title": "Mansfield Park",
+      "author": "Jane Austen",
+      "year": 1814,
+      "cat": "lit"
+    },
+    {
+      "id": 5200,
+      "title": "Metamorphosis",
+      "author": "Franz Kafka",
+      "year": 1915,
+      "cat": "lit"
+    },
+    {
+      "id": 2701,
+      "title": "Moby Dick",
+      "author": "Herman Melville",
+      "year": 1851,
+      "cat": "lit"
+    },
+    {
+      "id": 674,
+      "title": "My Antonia",
+      "author": "Willa Cather",
+      "year": 1918,
+      "cat": "lit"
+    },
+    {
+      "id": 580,
+      "title": "Nicholas Nickleby",
+      "author": "Charles Dickens",
+      "year": 1838,
+      "cat": "lit"
+    },
+    {
+      "id": 121,
+      "title": "Northanger Abbey",
+      "author": "Jane Austen",
+      "year": 1817,
+      "cat": "lit"
+    },
+    {
+      "id": 600,
+      "title": "Notes from the Underground",
+      "author": "Fyodor Dostoevsky",
+      "year": 1864,
+      "cat": "lit"
+    },
+    {
+      "id": 730,
+      "title": "Oliver Twist",
+      "author": "Charles Dickens",
+      "year": 1837,
+      "cat": "lit"
+    },
+    {
+      "id": 105,
+      "title": "Persuasion",
+      "author": "Jane Austen",
+      "year": 1817,
+      "cat": "lit"
+    },
+    {
+      "id": 1342,
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "year": 1813,
+      "cat": "lit"
+    },
+    {
+      "id": 161,
+      "title": "Sense and Sensibility",
+      "author": "Jane Austen",
+      "year": 1811,
+      "cat": "lit"
+    },
+    {
+      "id": 432,
+      "title": "The Awakening",
+      "author": "Kate Chopin",
+      "year": 1899,
+      "cat": "lit"
+    },
+    {
+      "id": 2197,
+      "title": "The Brothers Karamazov",
+      "author": "Fyodor Dostoevsky",
+      "year": 1880,
+      "cat": "lit"
+    },
+    {
+      "id": 2093,
+      "title": "The Death of Ivan Ilyich",
+      "author": "Leo Tolstoy",
+      "year": 1886,
+      "cat": "lit"
+    },
+    {
+      "id": 2148,
+      "title": "The Gift of the Magi",
+      "author": "O. Henry",
+      "year": 1906,
+      "cat": "lit"
+    },
+    {
+      "id": 2610,
+      "title": "The Hunchback of Notre-Dame",
+      "author": "Victor Hugo",
+      "year": 1831,
+      "cat": "lit"
+    },
+    {
+      "id": 174,
+      "title": "The Picture of Dorian Gray",
+      "author": "Oscar Wilde",
+      "year": 1890,
+      "cat": "lit"
+    },
+    {
+      "id": 5765,
+      "title": "The Red Badge of Courage",
+      "author": "Stephen Crane",
+      "year": 1895,
+      "cat": "lit"
+    },
+    {
+      "id": 33,
+      "title": "The Scarlet Letter",
+      "author": "Nathaniel Hawthorne",
+      "year": 1850,
+      "cat": "lit"
+    },
+    {
+      "id": 43,
+      "title": "The Strange Case of Dr Jekyll and Mr Hyde",
+      "author": "Robert Louis Stevenson",
+      "year": 1886,
+      "cat": "lit"
+    },
+    {
+      "id": 209,
+      "title": "The Turn of the Screw",
+      "author": "Henry James",
+      "year": 1898,
+      "cat": "lit"
+    },
+    {
+      "id": 376,
+      "title": "Walden",
+      "author": "Henry David Thoreau",
+      "year": 1854,
+      "cat": "lit"
+    },
+    {
+      "id": 2600,
+      "title": "War and Peace",
+      "author": "Leo Tolstoy",
+      "year": 1869,
+      "cat": "lit"
+    },
+    {
+      "id": 768,
+      "title": "Wuthering Heights",
+      "author": "Emily Brontë",
+      "year": 1847,
+      "cat": "lit"
+    },
+    {
+      "id": 244,
+      "title": "A Study in Scarlet",
+      "author": "Arthur Conan Doyle",
+      "year": 1887,
+      "cat": "mystery"
+    },
+    {
+      "id": 1661,
+      "title": "The Adventures of Sherlock Holmes",
+      "author": "Arthur Conan Doyle",
+      "year": 1892,
+      "cat": "mystery"
+    },
+    {
+      "id": 2852,
+      "title": "The Hound of the Baskervilles",
+      "author": "Arthur Conan Doyle",
+      "year": 1902,
+      "cat": "mystery"
+    },
+    {
+      "id": 1695,
+      "title": "The Moonstone",
+      "author": "Wilkie Collins",
+      "year": 1868,
+      "cat": "mystery"
+    },
+    {
+      "id": 932,
+      "title": "The Murders in the Rue Morgue",
+      "author": "Edgar Allan Poe",
+      "year": 1841,
+      "cat": "mystery"
+    },
+    {
+      "id": 2048,
+      "title": "The Purloined Letter",
+      "author": "Edgar Allan Poe",
+      "year": 1844,
+      "cat": "mystery"
+    },
+    {
+      "id": 175,
+      "title": "The Red House Mystery",
+      "author": "A.A. Milne",
+      "year": 1922,
+      "cat": "mystery"
+    },
+    {
+      "id": 108,
+      "title": "The Sign of the Four",
+      "author": "Arthur Conan Doyle",
+      "year": 1890,
+      "cat": "mystery"
+    },
+    {
+      "id": 583,
+      "title": "The Woman in White",
+      "author": "Wilkie Collins",
+      "year": 1859,
+      "cat": "mystery"
+    },
+    {
+      "id": 5132,
+      "title": "An Enquiry Concerning Human Understanding",
+      "author": "David Hume",
+      "year": 1748,
+      "cat": "philosophy"
+    },
+    {
+      "id": 4280,
+      "title": "Beyond Good and Evil",
+      "author": "Friedrich Nietzsche",
+      "year": 1886,
+      "cat": "philosophy"
+    },
+    {
+      "id": 7370,
+      "title": "Critique of Pure Reason",
+      "author": "Immanuel Kant",
+      "year": 1781,
+      "cat": "philosophy"
+    },
+    {
+      "id": 4280,
+      "title": "Discourse on Method",
+      "author": "René Descartes",
+      "year": 1637,
+      "cat": "philosophy"
+    },
+    {
+      "id": 5827,
+      "title": "Essays",
+      "author": "Francis Bacon",
+      "year": 1597,
+      "cat": "philosophy"
+    },
+    {
+      "id": 1232,
+      "title": "Leviathan",
+      "author": "Thomas Hobbes",
+      "year": 1651,
+      "cat": "philosophy"
+    },
+    {
+      "id": 1998,
+      "title": "Meditations",
+      "author": "Marcus Aurelius",
+      "year": 180,
+      "cat": "philosophy"
+    },
+    {
+      "id": 8438,
+      "title": "Nicomachean Ethics",
+      "author": "Aristotle",
+      "year": -350,
+      "cat": "philosophy"
+    },
+    {
+      "id": 5827,
+      "title": "On Liberty",
+      "author": "John Stuart Mill",
+      "year": 1859,
+      "cat": "philosophy"
+    },
+    {
+      "id": 2500,
+      "title": "Siddhartha",
+      "author": "Hermann Hesse",
+      "year": 1922,
+      "cat": "philosophy"
+    },
+    {
+      "id": 2400,
+      "title": "Tao Te Ching",
+      "author": "Laozi",
+      "year": -500,
+      "cat": "philosophy"
+    },
+    {
+      "id": 3600,
+      "title": "The Analects",
+      "author": "Confucius",
+      "year": -479,
+      "cat": "philosophy"
+    },
+    {
+      "id": 2412,
+      "title": "The Apology of Socrates",
+      "author": "Plato",
+      "year": -399,
+      "cat": "philosophy"
+    },
+    {
+      "id": 2018,
+      "title": "The Consolation of Philosophy",
+      "author": "Boethius",
+      "year": 524,
+      "cat": "philosophy"
+    },
+    {
+      "id": 1232,
+      "title": "The Enchiridion",
+      "author": "Epictetus",
+      "year": 125,
+      "cat": "philosophy"
+    },
+    {
+      "id": 1497,
+      "title": "The Republic",
+      "author": "Plato",
+      "year": -380,
+      "cat": "philosophy"
+    },
+    {
+      "id": 4705,
+      "title": "Thus Spoke Zarathustra",
+      "author": "Friedrich Nietzsche",
+      "year": 1883,
+      "cat": "philosophy"
+    },
+    {
+      "id": 4583,
+      "title": "Utopia",
+      "author": "Thomas More",
+      "year": 1516,
+      "cat": "philosophy"
+    },
+    {
+      "id": 1459,
+      "title": "Leaves of Grass",
+      "author": "Walt Whitman",
+      "year": 1855,
+      "cat": "poetry"
+    },
+    {
+      "id": 1046,
+      "title": "Lyrical Ballads",
+      "author": "William Wordsworth",
+      "year": 1798,
+      "cat": "poetry"
+    },
+    {
+      "id": 8800,
+      "title": "Ode to a Nightingale and Other Poems",
+      "author": "John Keats",
+      "year": 1819,
+      "cat": "poetry"
+    },
+    {
+      "id": 23,
+      "title": "Paradise Lost",
+      "author": "John Milton",
+      "year": 1667,
+      "cat": "poetry"
+    },
+    {
+      "id": 1475,
+      "title": "Poems by Emily Dickinson",
+      "author": "Emily Dickinson",
+      "year": 1890,
+      "cat": "poetry"
+    },
+    {
+      "id": 9007,
+      "title": "Poems of Percy Bysshe Shelley",
+      "author": "Percy Bysshe Shelley",
+      "year": 1820,
+      "cat": "poetry"
+    },
+    {
+      "id": 17192,
+      "title": "Sonnets from the Portuguese",
+      "author": "Elizabeth Barrett Browning",
+      "year": 1850,
+      "cat": "poetry"
+    },
+    {
+      "id": 1067,
+      "title": "The Canterbury Tales",
+      "author": "Geoffrey Chaucer",
+      "year": 1392,
+      "cat": "poetry"
+    },
+    {
+      "id": 1065,
+      "title": "The Divine Comedy",
+      "author": "Dante Alighieri",
+      "year": 1320,
+      "cat": "poetry"
+    },
+    {
+      "id": 2369,
+      "title": "The Raven and Other Poems",
+      "author": "Edgar Allan Poe",
+      "year": 1845,
+      "cat": "poetry"
+    },
+    {
+      "id": 2160,
+      "title": "The Rubaiyat of Omar Khayyam",
+      "author": "Omar Khayyam",
+      "year": 1859,
+      "cat": "poetry"
+    },
+    {
+      "id": 9996,
+      "title": "Experiments with Alternate Currents",
+      "author": "Nikola Tesla",
+      "year": 1892,
+      "cat": "science"
+    },
+    {
+      "id": 8130,
+      "title": "Flatland: A Romance of Many Dimensions",
+      "author": "Edwin A. Abbott",
+      "year": 1884,
+      "cat": "science"
+    },
+    {
+      "id": 2300,
+      "title": "On the Origin of Species",
+      "author": "Charles Darwin",
+      "year": 1859,
+      "cat": "science"
+    },
+    {
+      "id": 7038,
+      "title": "Outline of Science",
+      "author": "J. Arthur Thomson",
+      "year": 1922,
+      "cat": "science"
+    },
+    {
+      "id": 5827,
+      "title": "Pragmatism",
+      "author": "William James",
+      "year": 1907,
+      "cat": "science"
+    },
+    {
+      "id": 5001,
+      "title": "Relativity: The Special and General Theory",
+      "author": "Albert Einstein",
+      "year": 1920,
+      "cat": "science"
+    },
+    {
+      "id": 21279,
+      "title": "The ABC of Atoms",
+      "author": "Bertrand Russell",
+      "year": 1923,
+      "cat": "science"
+    },
+    {
+      "id": 33564,
+      "title": "The Chemical History of a Candle",
+      "author": "Michael Faraday",
+      "year": 1861,
+      "cat": "science"
+    },
+    {
+      "id": 16148,
+      "title": "The Mysterious Universe",
+      "author": "James Jeans",
+      "year": 1930,
+      "cat": "science"
+    },
+    {
+      "id": 4278,
+      "title": "The Principles of Psychology",
+      "author": "William James",
+      "year": 1890,
+      "cat": "science"
+    },
+    {
+      "id": 1228,
+      "title": "The Voyage of the Beagle",
+      "author": "Charles Darwin",
+      "year": 1839,
+      "cat": "science"
+    }
+  ]
+}
