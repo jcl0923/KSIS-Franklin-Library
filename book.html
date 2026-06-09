@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>關於圖書館 About — 富蘭克林圖書館 KSIS</title>
+<title>書本詳情 — 富蘭克林圖書館 KSIS</title>
 <style>
 :root{
   --navy:#1a2744;--navy-mid:#243360;
@@ -12,6 +12,7 @@
   --border:rgba(201,168,76,.25);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
 body{font-family:Georgia,'Times New Roman',serif;background:var(--navy);color:var(--cream);min-height:100vh;}
 a{color:inherit;text-decoration:none;}
 
@@ -48,68 +49,87 @@ nav a:hover,nav a.active{color:var(--gold);}
 .lang-toggle button:hover:not(.active){background:rgba(201,168,76,.15);}
 @media(max-width:768px){header{padding:0 16px;gap:10px;}nav{display:none;}.hd-sep{display:none;}}
 
-/* Hero */
-.hero{position:relative;z-index:1;
-  background:linear-gradient(135deg,rgba(26,39,68,.95),rgba(28,50,98,.95));
-  border-bottom:1px solid var(--border);
-  padding:60px 40px;display:flex;align-items:center;gap:60px;}
-@media(max-width:768px){.hero{padding:40px 16px;flex-direction:column;gap:30px;text-align:center;}}
-.hero-portrait-wrap{flex-shrink:0;}
-.hero-portrait{width:160px;border:4px solid var(--gold);
-  filter:sepia(20%) contrast(108%);box-shadow:0 12px 40px rgba(0,0,0,.6);}
-.hero-text{}
-.hero-overtitle{font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
-.hero-title{font-size:2.6rem;font-weight:400;color:var(--cream);margin-bottom:8px;line-height:1.2;}
-.hero-sub{font-size:1.05rem;color:var(--cream-dim);letter-spacing:.05em;margin-bottom:28px;}
-.hero-divider{width:48px;height:2px;background:linear-gradient(to right,var(--gold),transparent);margin-bottom:24px;}
-@media(max-width:768px){.hero-divider{margin:0 auto 24px;}}
-blockquote.hero-quote{font-style:italic;font-size:1rem;line-height:1.8;color:var(--cream-dim);
-  max-width:560px;border-left:2px solid var(--gold);padding-left:20px;}
-blockquote.hero-quote cite{display:block;font-style:normal;font-size:.82rem;color:var(--gold);margin-top:10px;}
-@media(max-width:768px){blockquote.hero-quote{text-align:left;}}
+/* Breadcrumb */
+.breadcrumb{position:relative;z-index:1;padding:16px 40px;font-size:.8rem;color:var(--cream-low);}
+.breadcrumb a{color:var(--gold);transition:opacity .2s;}
+.breadcrumb a:hover{opacity:.75;}
+.breadcrumb span{margin:0 8px;}
+@media(max-width:768px){.breadcrumb{padding:12px 16px;}}
 
-/* Content */
-.content{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:60px 40px;}
-@media(max-width:768px){.content{padding:40px 16px;}}
+/* Loading/Error */
+.loading,.error{text-align:center;padding:100px 20px;color:var(--cream-dim);position:relative;z-index:1;}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);
+  border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-.section{margin-bottom:56px;}
-.section-title{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
-.section-title-zh{font-size:1.5rem;font-weight:400;color:var(--cream);margin-bottom:16px;}
-.section-rule{width:40px;height:2px;background:var(--gold);margin-bottom:24px;}
-.section p{font-size:.95rem;color:var(--cream-dim);line-height:1.9;margin-bottom:14px;}
+/* Main detail */
+.book-detail{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 40px 60px;}
+@media(max-width:768px){.book-detail{padding:0 16px 40px;}}
 
-/* Stats row */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:56px;}
-@media(max-width:600px){.stats{grid-template-columns:1fr 1fr;}}
-.stat{border:1px solid var(--border);border-radius:4px;padding:24px;text-align:center;
-  background:rgba(255,255,255,.04);}
-.stat-num{font-size:2.4rem;color:var(--gold);font-weight:400;line-height:1;}
-.stat-label{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-dim);margin-top:8px;}
+.detail-grid{display:grid;grid-template-columns:220px 1fr;gap:48px;align-items:start;}
+@media(max-width:720px){.detail-grid{grid-template-columns:1fr;gap:24px;}}
 
-/* Features grid */
-.features{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:56px;}
-@media(max-width:600px){.features{grid-template-columns:1fr;}}
-.feature{border:1px solid var(--border);border-radius:4px;padding:24px;background:rgba(255,255,255,.04);}
-.feature-icon{font-size:1.8rem;margin-bottom:12px;}
-.feature-title{font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
-.feature-desc{font-size:.88rem;color:var(--cream-dim);line-height:1.7;}
+/* Cover */
+.detail-cover{position:sticky;top:90px;}
+.cover-img{width:100%;aspect-ratio:2/3;object-fit:cover;border:3px solid var(--gold);
+  box-shadow:0 12px 40px rgba(0,0,0,.6);display:block;}
+.cover-no{width:100%;aspect-ratio:2/3;background:linear-gradient(135deg,#0c1628,var(--navy-mid));
+  border:3px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;font-size:3rem;color:var(--gold);}
+.cover-no span{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-dim);}
+@media(max-width:720px){.detail-cover{position:static;max-width:200px;margin:0 auto;}}
 
-/* Contact */
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
-@media(max-width:600px){.contact-grid{grid-template-columns:1fr;}}
-.contact-card{border:1px solid var(--border);border-radius:4px;padding:24px;background:rgba(255,255,255,.04);}
-.contact-card h4{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
-.contact-card p,.contact-card a{font-size:.88rem;color:var(--cream-dim);line-height:1.8;display:block;}
-.contact-card a:hover{color:var(--gold);}
+/* Info */
+.detail-info{}
+.d-label{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.d-title{font-size:2rem;font-weight:400;line-height:1.25;color:var(--cream);margin-bottom:8px;}
+.d-author{font-size:1.1rem;color:var(--gold-lt);margin-bottom:20px;}
+.d-divider{width:40px;height:2px;background:linear-gradient(to right,var(--gold),transparent);margin:18px 0;}
 
-/* Action area */
-.cta{text-align:center;padding:48px;border:1px solid var(--border);border-radius:4px;
-  background:rgba(201,168,76,.05);margin-bottom:20px;}
-.cta h3{font-size:1.5rem;font-weight:400;color:var(--cream);margin-bottom:10px;}
-.cta p{font-size:.92rem;color:var(--cream-dim);margin-bottom:28px;}
-.cta a{display:inline-block;padding:14px 40px;background:var(--gold);color:var(--navy);
-  border-radius:3px;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;transition:background .2s;}
-.cta a:hover{background:var(--gold-lt);}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+@media(max-width:480px){.meta-grid{grid-template-columns:1fr;}}
+.meta-item{}
+.meta-key{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.meta-val{font-size:.88rem;color:var(--cream-dim);line-height:1.5;}
+
+/* Subjects */
+.subjects{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;}
+.subject-tag{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);
+  color:var(--cream-dim);padding:4px 12px;border-radius:20px;font-size:.74rem;letter-spacing:.04em;}
+
+/* Action buttons */
+.actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:32px;}
+.btn-primary{padding:13px 28px;background:var(--gold);color:var(--navy);border:none;border-radius:3px;
+  cursor:pointer;font:inherit;font-size:.9rem;letter-spacing:.1em;text-transform:uppercase;
+  transition:background .2s;display:inline-block;text-align:center;}
+.btn-primary:hover{background:var(--gold-lt);}
+.btn-secondary{padding:13px 24px;background:transparent;color:var(--gold);border:1px solid var(--gold);
+  border-radius:3px;cursor:pointer;font:inherit;font-size:.9rem;letter-spacing:.1em;text-transform:uppercase;
+  transition:all .2s;display:inline-block;text-align:center;}
+.btn-secondary:hover{background:rgba(201,168,76,.1);}
+
+/* Description */
+.desc-section{border-top:1px solid var(--border);padding-top:24px;}
+.desc-title{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+.desc-text{font-size:.9rem;color:var(--cream-dim);line-height:1.8;}
+
+/* Related */
+.related-section{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 40px 60px;}
+@media(max-width:768px){.related-section{padding:0 16px 40px;}}
+.section-head{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
+.section-head h3{font-size:1rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:400;}
+.section-head::after{content:'';flex:1;height:1px;background:var(--border);}
+.rel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:20px;}
+.rel-card{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:4px;
+  overflow:hidden;cursor:pointer;transition:transform .2s,background .2s;}
+.rel-card:hover{transform:translateY(-3px);background:rgba(255,255,255,.09);}
+.rel-cover{width:100%;aspect-ratio:2/3;overflow:hidden;background:#0c1628;}
+.rel-cover img{width:100%;height:100%;object-fit:cover;}
+.rel-cover-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;}
+.rel-body{padding:10px;}
+.rel-title{font-size:.76rem;color:var(--cream);line-height:1.3;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px;}
+.rel-author{font-size:.68rem;color:var(--gold);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* Footer */
 footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:28px 40px;
@@ -133,7 +153,7 @@ footer a{color:var(--gold);}
   </div>
   <nav>
     <a href="catalog.html" data-zh="書庫" data-en="Catalog">書庫</a>
-    <a href="about.html" class="active" data-zh="關於" data-en="About">關於</a>
+    <a href="about.html" data-zh="關於" data-en="About">關於</a>
     <a href="https://www.ksis.tn.edu.tw" target="_blank" data-zh="學校" data-en="School">學校</a>
   </nav>
   <div class="hd-sep"></div>
@@ -147,147 +167,56 @@ footer a{color:var(--gold);}
   </div>
 </header>
 
-<!-- Hero -->
-<div class="hero">
-  <div class="hero-portrait-wrap">
-    <img class="hero-portrait"
-         src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/FDR_1944_Color_Portrait.jpg/440px-FDR_1944_Color_Portrait.jpg"
-         alt="President Franklin D. Roosevelt"
-         onerror="this.style.display='none'">
-  </div>
-  <div class="hero-text">
-    <div class="hero-overtitle" data-zh="崑山國際學校" data-en="Kuen Shan International School">崑山國際學校</div>
-    <h1 class="hero-title" data-zh="富蘭克林圖書館" data-en="Franklin Library">富蘭克林圖書館</h1>
-    <p class="hero-sub" data-zh="數位閱讀平台 · 雙語圖書館系統" data-en="Digital Reading Platform · Bilingual Library System">數位閱讀平台 · 雙語圖書館系統</p>
-    <div class="hero-divider"></div>
-    <blockquote class="hero-quote">
-      <span class="zh-t">「民主的真正保障是教育；民主不能成功，除非那些表達選擇的人準備好明智地做出選擇。」</span>
-      <span class="en-t" style="display:none">"Democracy cannot succeed unless those who express their choice are prepared to choose wisely. The real safeguard of democracy, therefore, is education."</span>
-      <cite>— Franklin D. Roosevelt, 第 32 任美國總統</cite>
-    </blockquote>
-  </div>
+<div class="breadcrumb">
+  <a href="catalog.html" data-zh="書庫" data-en="Catalog">書庫</a>
+  <span>›</span>
+  <span id="bc-title">…</span>
 </div>
 
-<!-- Content -->
-<div class="content">
-
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-num">70,000+</div>
-      <div class="stat-label" data-zh="館藏電子書" data-en="E-Books">館藏電子書</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">60+</div>
-      <div class="stat-label" data-zh="閱讀分類" data-en="Categories">閱讀分類</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">雙語</div>
-      <div class="stat-label" data-zh="中英文介面" data-en="Bilingual">中英文介面</div>
-    </div>
+<div id="main-area">
+  <div class="loading">
+    <div class="spinner"></div>
+    <div id="load-text">載入中…</div>
   </div>
-
-  <!-- About -->
-  <div class="section">
-    <div class="section-title" data-zh="關於我們" data-en="About Us">關於我們</div>
-    <h2 class="section-title-zh" data-zh="富蘭克林數位圖書館" data-en="The Franklin Digital Library">富蘭克林數位圖書館</h2>
-    <div class="section-rule"></div>
-    <p class="zh-t">崑山國際學校富蘭克林圖書館，以美國第三十二任總統富蘭克林·德拉諾·羅斯福（Franklin Delano Roosevelt）命名。羅斯福總統深信教育是民主的基石，更是每個公民通往自由與平等的橋梁。本圖書館以此精神為核心，致力於為崑山國中部及高中部師生提供廣泛、多元的優質閱讀資源。</p>
-    <p class="en-t" style="display:none">The Franklin Library at Kuen Shan International School is named in honor of Franklin Delano Roosevelt, the 32nd President of the United States. President Roosevelt believed that education is the true safeguard of democracy and the bridge between citizens and freedom. This library embodies that spirit, dedicated to providing KSIS junior high and high school students and teachers with broad, diverse, and high-quality reading resources.</p>
-    <p class="zh-t">本數位圖書館整合 Project Gutenberg 超過 70,000 冊公共領域電子書，涵蓋文學、歷史、科學、詩歌、哲學、傳記等各大類別，完全免費提供師生線上閱讀與下載，不受時間及地點限制。</p>
-    <p class="en-t" style="display:none">Our digital library integrates over 70,000 public-domain e-books from Project Gutenberg, spanning literature, history, science, poetry, philosophy, biography, and more — all freely available for reading and download by KSIS students and teachers, anytime and anywhere.</p>
-  </div>
-
-  <!-- Features -->
-  <div class="features">
-    <div class="feature">
-      <div class="feature-icon">📚</div>
-      <div class="feature-title" data-zh="豐富館藏" data-en="Extensive Collection">豐富館藏</div>
-      <p class="feature-desc zh-t">超過 70,000 冊公共領域電子書，涵蓋世界各地經典著作，適合各年齡層閱讀。</p>
-      <p class="feature-desc en-t" style="display:none">Over 70,000 public-domain e-books covering classic works from around the world, suitable for all reading levels.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">🌐</div>
-      <div class="feature-title" data-zh="雙語系統" data-en="Bilingual System">雙語系統</div>
-      <p class="feature-desc zh-t">全站支援繁體中文及英文切換，讓師生依需求選擇介面語言，促進雙語學習。</p>
-      <p class="feature-desc en-t" style="display:none">Full Traditional Chinese and English interface support, allowing users to switch languages and promoting bilingual learning.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">🔍</div>
-      <div class="feature-title" data-zh="智能搜尋" data-en="Smart Search">智能搜尋</div>
-      <p class="feature-desc zh-t">依書名、作者、主題快速搜尋，並可依類別篩選，輕鬆找到適合的書籍。</p>
-      <p class="feature-desc en-t" style="display:none">Quickly search by title, author, or subject, and filter by category to easily find the right book.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">📱</div>
-      <div class="feature-title" data-zh="隨時閱讀" data-en="Read Anywhere">隨時閱讀</div>
-      <p class="feature-desc zh-t">支援電腦、平板及手機瀏覽，可線上閱讀或下載 EPUB 格式，課內外皆可使用。</p>
-      <p class="feature-desc en-t" style="display:none">Works on desktop, tablet, and mobile. Read online or download EPUB files for offline reading in or out of class.</p>
-    </div>
-  </div>
-
-  <!-- How to Use -->
-  <div class="section">
-    <div class="section-title" data-zh="使用說明" data-en="How to Use">使用說明</div>
-    <h2 class="section-title-zh" data-zh="如何使用數位圖書館" data-en="Using the Digital Library">如何使用數位圖書館</h2>
-    <div class="section-rule"></div>
-    <p class="zh-t">1. 使用學校帳號（學號 + 密碼）登入系統。</p>
-    <p class="en-t" style="display:none">1. Sign in using your school account (student ID + password).</p>
-    <p class="zh-t">2. 在書庫頁面瀏覽或搜尋感興趣的書籍，可依類別篩選。</p>
-    <p class="en-t" style="display:none">2. Browse or search the catalog by title, author, or category.</p>
-    <p class="zh-t">3. 點擊書籍封面進入詳情頁面，查看書本介紹。</p>
-    <p class="en-t" style="display:none">3. Click on a book cover to view its detail page.</p>
-    <p class="zh-t">4. 點選「線上閱讀」即可在瀏覽器中直接閱讀；或點選「下載 EPUB」儲存到裝置離線閱讀。</p>
-    <p class="en-t" style="display:none">4. Click "Read Online" to read in your browser, or "Download EPUB" to save for offline reading.</p>
-    <p class="zh-t">5. 所有書籍均來自 Project Gutenberg，版權已進入公共領域，可免費合法取用。</p>
-    <p class="en-t" style="display:none">5. All books are from Project Gutenberg — public domain, free, and legal to read and download.</p>
-  </div>
-
-  <!-- Contact -->
-  <div class="section">
-    <div class="section-title" data-zh="聯繫我們" data-en="Contact">聯繫我們</div>
-    <h2 class="section-title-zh" data-zh="圖書館聯絡資訊" data-en="Library Contact Information">圖書館聯絡資訊</h2>
-    <div class="section-rule"></div>
-    <div class="contact-grid">
-      <div class="contact-card">
-        <h4 data-zh="地址與電話" data-en="Address & Phone">地址與電話</h4>
-        <p data-zh="崑山國際學校 富蘭克林圖書館" data-en="Franklin Library, Kuen Shan International School">崑山國際學校 富蘭克林圖書館</p>
-        <p data-zh="臺南市北區開元路 444 號" data-en="444 Kaiyuan Rd., North Dist., Tainan City">臺南市北區開元路 444 號</p>
-        <p>Tel: (06) 236-4408</p>
-        <p>Fax: (06) 237-8316</p>
-      </div>
-      <div class="contact-card">
-        <h4 data-zh="開放時間" data-en="Opening Hours">開放時間</h4>
-        <p data-zh="週一至週五：08:00 – 17:00" data-en="Monday – Friday: 08:00 – 17:00">週一至週五：08:00 – 17:00</p>
-        <p data-zh="週六：09:00 – 12:00" data-en="Saturday: 09:00 – 12:00">週六：09:00 – 12:00</p>
-        <p data-zh="國定假日：休館" data-en="Public Holidays: Closed">國定假日：休館</p>
-        <p style="margin-top:8px;"><a href="https://www.ksis.tn.edu.tw" target="_blank">www.ksis.tn.edu.tw</a></p>
-        <p><a href="https://www.facebook.com/KUENSHANhighschool/" target="_blank">Facebook</a></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- CTA -->
-  <div class="cta">
-    <h3 data-zh="開始閱讀探索" data-en="Start Exploring">開始閱讀探索</h3>
-    <p data-zh="超過 70,000 冊書籍等待您的探索 — 登入即可免費閱讀" data-en="Over 70,000 books await your discovery — sign in to read for free">超過 70,000 冊書籍等待您的探索 — 登入即可免費閱讀</p>
-    <a href="catalog.html" data-zh="前往書庫" data-en="Go to Catalog">前往書庫</a>
-  </div>
-
 </div>
-
-<footer>
-  <span>© 崑山國際學校 富蘭克林圖書館 · Kuen Shan International School Franklin Library</span>
-  <span><a href="https://www.gutenberg.org" target="_blank">Powered by Project Gutenberg</a></span>
-</footer>
 
 <script>
 let lang = localStorage.getItem('ksisLang') || 'zh';
 
-window.addEventListener('DOMContentLoaded',()=>{
+window.addEventListener('DOMContentLoaded', async ()=>{
   const u = sessionStorage.getItem('ksisUser');
   document.getElementById('uname').textContent = u||'—';
   applyLang(lang);
+
+  const p = new URLSearchParams(location.search);
+  const id    = p.get('id');
+  const title = p.get('t') || 'Untitled';
+  const author= p.get('a') || '';
+  const covId = p.get('c') || '';
+  const ia    = p.get('ia') || '';
+  const year  = p.get('y') || '';
+
+  if(!id){ showError(lang==='zh'?'找不到此書':'Book not found'); return; }
+
+  document.getElementById('bc-title').textContent = title;
+
+  // Render immediately with URL param data
+  renderDetail({id, title, author, covId, ia, year, subjects:[], description:''});
+
+  // Then fetch richer data from Open Library
+  try{
+    const res = await fetch(`https://openlibrary.org/works/${id}.json`);
+    if(res.ok){
+      const data = await res.json();
+      const desc = typeof data.description === 'object'
+        ? data.description.value
+        : (data.description || '');
+      const subjects = data.subjects || [];
+      enrichDetail({desc, subjects});
+    }
+  }catch(e){}
+
+  loadRelated({title, author, id});
 });
 
 function setLang(l){
@@ -302,9 +231,130 @@ function applyLang(l){
   document.querySelectorAll('[data-zh]').forEach(el=>{
     el.textContent=l==='zh'?el.dataset.zh:el.dataset.en;
   });
-  document.querySelectorAll('.zh-t').forEach(el=>el.style.display=l==='zh'?'':'none');
-  document.querySelectorAll('.en-t').forEach(el=>el.style.display=l==='en'?'':'none');
 }
+
+function renderDetail(b){
+  const cover = b.covId
+    ? `https://covers.openlibrary.org/b/id/${b.covId}-L.jpg`
+    : '';
+  const readUrl = b.ia
+    ? `https://archive.org/details/${b.ia}`
+    : `https://openlibrary.org/works/${b.id}`;
+
+  const coverHtml = cover
+    ? `<img class="cover-img" src="${cover}" alt="${b.title.replace(/"/g,'')}"
+           onerror="this.outerHTML='<div class=cover-no>📖<span>📚</span></div>'">`
+    : `<div class="cover-no">📖<span>${lang==='zh'?'暫無封面':'No Cover'}</span></div>`;
+
+  const metaItems = [
+    {k:lang==='zh'?'作者':'Author',   v: b.author || (lang==='zh'?'佚名':'Unknown')},
+    {k:lang==='zh'?'出版年份':'Year', v: b.year || '—'},
+    {k:lang==='zh'?'書庫':'Library',  v: 'Open Library'},
+    {k:lang==='zh'?'編號':'Work ID',  v: b.id},
+  ];
+
+  const html = `
+  <div class="book-detail">
+    <div class="detail-grid">
+      <div class="detail-cover">${coverHtml}</div>
+      <div class="detail-info">
+        <div class="d-label">${lang==='zh'?'書名':'Title'}</div>
+        <h1 class="d-title">${b.title}</h1>
+        <div class="d-author">${b.author}</div>
+        <div class="d-divider"></div>
+        <div class="meta-grid">
+          ${metaItems.map(m=>`<div class="meta-item">
+            <div class="meta-key">${m.k}</div>
+            <div class="meta-val">${m.v}</div>
+          </div>`).join('')}
+        </div>
+        <div class="subjects" id="subject-tags"></div>
+        <div class="actions">
+          <a href="${readUrl}" target="_blank" class="btn-primary">
+            ${lang==='zh'?'線上閱讀':'Read Online'}
+          </a>
+          <a href="https://openlibrary.org/works/${b.id}" target="_blank" class="btn-secondary">
+            ${lang==='zh'?'在 Open Library 查看':'View on Open Library'}
+          </a>
+        </div>
+        <div class="desc-section">
+          <div class="desc-title">${lang==='zh'?'關於本書':'About This Book'}</div>
+          <p class="desc-text" id="book-desc">${lang==='zh'?'載入中…':'Loading…'}</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('main-area').innerHTML = html;
+}
+
+function enrichDetail({desc, subjects}){
+  // Update description
+  const descEl = document.getElementById('book-desc');
+  if(descEl){
+    descEl.textContent = desc ||
+      (lang==='zh'?'本書收錄於 Open Library 免費電子書庫，可線上閱讀或借閱。':'This book is available in the Open Library free e-book collection.');
+  }
+  // Add subject tags
+  const tagsEl = document.getElementById('subject-tags');
+  if(tagsEl && subjects.length){
+    tagsEl.innerHTML = subjects.slice(0,10).map(s=>`<span class="subject-tag">${s}</span>`).join('');
+  }
+}
+
+async function loadRelated(b){
+  const query = b.author || b.title || 'classic';
+  try{
+    const res = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=7&fields=key,title,author_name,cover_i,ia`);
+    const data = await res.json();
+    const others = (data.docs||[]).filter(r=>r.key!==`/works/${b.id}`).slice(0,6);
+    if(!others.length) return;
+
+    const section = document.createElement('div');
+    section.className='related-section';
+    section.innerHTML=`
+      <div class="section-head">
+        <h3 data-zh="相關書籍" data-en="Related Books">${lang==='zh'?'相關書籍':'Related Books'}</h3>
+      </div>
+      <div class="rel-grid">
+        ${others.map(rb=>{
+          const rc = rb.cover_i ? `https://covers.openlibrary.org/b/id/${rb.cover_i}-M.jpg` : '';
+          const ra = (rb.author_name||[])[0]||'';
+          const rt = (rb.title||'').length>40?(rb.title).substring(0,40)+'…':rb.title;
+          const rp = new URLSearchParams({id:(rb.key||'').replace('/works/',''),t:rb.title||'',a:ra,c:rb.cover_i||'',ia:(rb.ia||[])[0]||''});
+          return `<div class="rel-card" onclick="location.href='book.html?${rp}'">
+            <div class="rel-cover">
+              ${rc ? `<img src="${rc}" alt="${rt}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=rel-cover-ph>📖</div>'>` : '<div class="rel-cover-ph">📖</div>'}
+            </div>
+            <div class="rel-body">
+              <div class="rel-title">${rt}</div>
+              <div class="rel-author">${ra}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    document.querySelector('.book-detail')?.after(section);
+  }catch(e){}
+
+  // add footer
+  const ft = document.createElement('footer');
+  ft.innerHTML=`<span>© 崑山國際學校 富蘭克林圖書館</span>
+    <span><a href="catalog.html" data-zh="返回書庫" data-en="Back to Catalog">${lang==='zh'?'返回書庫':'Back to Catalog'}</a></span>
+    <span>Powered by <a href="https://www.gutenberg.org" target="_blank">Project Gutenberg</a></span>`;
+  document.body.appendChild(ft);
+}
+
+function showError(msg){
+  document.getElementById('main-area').innerHTML=
+    `<div class="error"><p style="font-size:1.1rem;margin-bottom:16px;">${msg}</p>
+     <a href="catalog.html" style="color:var(--gold)">← ${lang==='zh'?'返回書庫':'Back to Catalog'}</a></div>`;
+}
+
+function formatAuthor(name){
+  if(name.includes(',')){const p=name.split(',');return(p[1]?.trim()||'')+' '+p[0].trim();}
+  return name;
+}
+
 function logout(){
   sessionStorage.clear();
   window.location.href='index.html';
