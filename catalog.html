@@ -274,13 +274,14 @@ let currentTopic = '';
 let currentSearch = '';
 let totalCount = 0;
 const PER_PAGE = 32;
-const API = 'https://gutendex.com/books/';
+const API = 'https://openlibrary.org/search.json';
+const FIELDS = 'key,title,author_name,cover_i,first_publish_year,subject,ia,language,edition_count';
 
 const CATS = [
   {zh:'全部',en:'All',topic:''},
   {zh:'冒險',en:'Adventure',topic:'adventure'},
   {zh:'經典文學',en:'Literature',topic:'fiction'},
-  {zh:'推理懸疑',en:'Mystery',topic:'detective'},
+  {zh:'推理懸疑',en:'Mystery',topic:'mystery_fiction'},
   {zh:'歷史',en:'History',topic:'history'},
   {zh:'科學',en:'Science',topic:'science'},
   {zh:'詩歌',en:'Poetry',topic:'poetry'},
@@ -355,18 +356,29 @@ async function loadBooks(){
     <div>${lang==='zh'?'正在載入書庫…':'Loading library…'}</div></div>`;
   document.getElementById('pagination').style.display='none';
 
-  let url = `${API}?page=${currentPage}`;
-  if(currentTopic) url += `&topic=${encodeURIComponent(currentTopic)}`;
-  if(currentSearch) url += `&search=${encodeURIComponent(currentSearch)}`;
+  const params = new URLSearchParams({
+    limit: PER_PAGE,
+    page: currentPage,
+    fields: FIELDS
+  });
+  if(currentSearch){
+    params.set('q', currentSearch);
+  } else if(currentTopic){
+    params.set('subject', currentTopic);
+  } else {
+    params.set('q', 'classic');
+    params.set('has_fulltext', 'true');
+  }
 
   try{
-    const res = await fetch(url);
+    const res = await fetch(`${API}?${params}`);
     if(!res.ok) throw new Error('Network error');
     const data = await res.json();
-    totalCount = data.count;
-    updateResultsInfo(data.count);
-    renderBooks(data.results, area);
-    renderPagination(data.count);
+    const count = data.numFound || 0;
+    totalCount = count;
+    updateResultsInfo(count);
+    renderBooks(data.docs || [], area);
+    renderPagination(count);
   }catch(err){
     area.innerHTML=`<div class="error">
       <div class="error-icon">⚠️</div>
@@ -399,27 +411,37 @@ function renderBooks(books, area){
 
   const cards = books.map(b=>{
     const title = b.title || 'Untitled';
-    const author = b.authors[0]?.name || (lang==='zh'?'佚名':'Unknown');
-    const langs = b.languages.map(l=>l.toUpperCase()).join('·');
-    const dl = b.download_count ? b.download_count.toLocaleString() : '—';
-
-    // Try cover image
-    let cover = b.formats['image/jpeg'] || '';
-    if(!cover) cover = `https://www.gutenberg.org/cache/epub/${b.id}/pg${b.id}.cover.medium.jpg`;
-
+    const author = (b.author_name||[])[0] || (lang==='zh'?'佚名':'Unknown');
+    const cover = b.cover_i
+      ? `https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg`
+      : '';
+    const langs = ((b.language||['en']).slice(0,2)).map(l=>l.toUpperCase()).join('·');
+    const editions = b.edition_count ? `${b.edition_count} ed.` : '';
     const shortTitle = title.length > 55 ? title.substring(0,55)+'…' : title;
 
-    return `<div class="book-card" onclick="openBook(${b.id})" title="${title.replace(/"/g,'&quot;')}">
+    // encode all data needed for book page
+    const p = new URLSearchParams({
+      id: (b.key||'').replace('/works/',''),
+      t:  title,
+      a:  author,
+      c:  b.cover_i||'',
+      ia: (b.ia||[])[0]||'',
+      y:  b.first_publish_year||''
+    });
+
+    return `<div class="book-card" onclick="location.href='book.html?${p}'" title="${title.replace(/"/g,'&quot;')}">
       <div class="cover-wrap">
-        <img src="${cover}" alt="${shortTitle.replace(/"/g,'&quot;')}" loading="lazy"
-             onerror="this.parentNode.innerHTML='<div class=cover-placeholder>📖<span>${langs}</span></div>'">
+        ${cover
+          ? `<img src="${cover}" alt="${shortTitle.replace(/"/g,'')}" loading="lazy"
+               onerror="this.parentNode.innerHTML='<div class=cover-placeholder>📖<span>${langs}</span></div>'">`
+          : `<div class="cover-placeholder">📖<span>${langs}</span></div>`}
       </div>
       <div class="card-body">
         <div class="card-title">${shortTitle}</div>
-        <div class="card-author">${formatAuthor(author)}</div>
+        <div class="card-author">${author}</div>
         <div class="card-foot">
           <span class="lang-badge">${langs}</span>
-          <span class="dl-count">↓ ${dl}</span>
+          <span class="dl-count">${editions}</span>
         </div>
       </div>
     </div>`;
@@ -428,17 +450,13 @@ function renderBooks(books, area){
   area.innerHTML = `<div class="book-grid">${cards}</div>`;
 }
 
-function formatAuthor(name){
-  // Gutenberg authors are "Last, First" — flip to "First Last"
-  if(name.includes(',')){
-    const parts = name.split(',');
-    return (parts[1]?.trim()||'') + ' ' + parts[0].trim();
-  }
-  return name;
-}
-
-function openBook(id){
-  window.location.href=`book.html?id=${id}`;
+function openBook(b){
+  const p = new URLSearchParams({
+    id: (b.key||'').replace('/works/',''),
+    t: b.title||'', a: (b.author_name||[])[0]||'',
+    c: b.cover_i||'', ia: (b.ia||[])[0]||'', y: b.first_publish_year||''
+  });
+  location.href='book.html?'+p;
 }
 
 /* ── Pagination ─────────────────────────────── */
