@@ -275,22 +275,23 @@ let currentPage = 1;
 let currentCat = CATS[0];
 let currentSearch = '';
 let totalCount = 0;
-const PER_PAGE = 32;
+const PER_PAGE = 20;
 const API = 'https://www.googleapis.com/books/v1/volumes';
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 const CATS = [
-  {zh:'全部',    en:'All',        q:'classic literature public domain'},
-  {zh:'冒險',    en:'Adventure',  q:'adventure stories classic'},
-  {zh:'經典文學',en:'Literature', q:'classic fiction novel'},
-  {zh:'推理懸疑',en:'Mystery',    q:'mystery detective fiction'},
-  {zh:'歷史',    en:'History',    q:'history ancient world'},
-  {zh:'科學',    en:'Science',    q:'science nature discovery'},
-  {zh:'詩歌',    en:'Poetry',     q:'poetry poems classic'},
-  {zh:'傳記',    en:'Biography',  q:'biography autobiography memoir'},
-  {zh:'哲學',    en:'Philosophy', q:'philosophy ethics wisdom'},
-  {zh:'戲劇',    en:'Drama',      q:'drama plays shakespeare'},
-  {zh:'兒童',    en:'Children',   q:'children stories fairy tales classic'},
-  {zh:'旅遊',    en:'Travel',     q:'travel exploration voyage'},
+  {zh:'全部',    en:'All',        q:'subject:fiction'},
+  {zh:'冒險',    en:'Adventure',  q:'subject:adventure'},
+  {zh:'經典文學',en:'Literature', q:'subject:literature'},
+  {zh:'推理懸疑',en:'Mystery',    q:'subject:mystery'},
+  {zh:'歷史',    en:'History',    q:'subject:history'},
+  {zh:'科學',    en:'Science',    q:'subject:science'},
+  {zh:'詩歌',    en:'Poetry',     q:'subject:poetry'},
+  {zh:'傳記',    en:'Biography',  q:'subject:biography'},
+  {zh:'哲學',    en:'Philosophy', q:'subject:philosophy'},
+  {zh:'戲劇',    en:'Drama',      q:'subject:drama'},
+  {zh:'兒童',    en:'Children',   q:'subject:juvenile fiction'},
+  {zh:'旅遊',    en:'Travel',     q:'subject:travel'},
 ];
 
 /* ── Init ──────────────────────────────────── */
@@ -345,41 +346,81 @@ function selectCat(i){
 /* ── Search ─────────────────────────────────── */
 function doSearch(){
   const q = document.getElementById('search-input').value.trim();
+  if(!q) return;
   currentSearch = q;
   currentPage = 1;
-  currentTopic = '';
+  currentCat = CATS[0];
   buildCats();
   loadBooks();
+}
+
+/* ── Cache helpers ──────────────────────────── */
+function cacheKey(q, page){ return `ksis_books_${btoa(q+page)}`; }
+function fromCache(key){
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return null;
+    const {ts, data} = JSON.parse(raw);
+    if(Date.now()-ts > CACHE_TTL){ localStorage.removeItem(key); return null; }
+    return data;
+  }catch(e){ return null; }
+}
+function toCache(key, data){
+  try{ localStorage.setItem(key, JSON.stringify({ts:Date.now(), data})); }catch(e){}
+}
+
+/* ── Skeleton loader ────────────────────────── */
+function showSkeletons(area){
+  const sk = Array(PER_PAGE).fill(`
+    <div class="book-card" style="pointer-events:none">
+      <div class="cover-wrap" style="background:rgba(255,255,255,.06);animation:pulse 1.4s ease infinite"></div>
+      <div class="card-body">
+        <div style="height:12px;background:rgba(255,255,255,.06);border-radius:3px;margin-bottom:8px;animation:pulse 1.4s ease infinite"></div>
+        <div style="height:10px;width:60%;background:rgba(255,255,255,.04);border-radius:3px;animation:pulse 1.4s ease infinite"></div>
+      </div>
+    </div>`).join('');
+  area.innerHTML = `<style>@keyframes pulse{0%,100%{opacity:.4}50%{opacity:.9}}</style><div class="book-grid">${sk}</div>`;
 }
 
 /* ── Load Books ─────────────────────────────── */
 async function loadBooks(){
   const area = document.getElementById('book-area');
-  area.innerHTML = `<div class="loading"><div class="spinner"></div>
-    <div>${lang==='zh'?'正在載入書庫…':'Loading library…'}</div></div>`;
   document.getElementById('pagination').style.display='none';
 
   const q = currentSearch || currentCat.q;
+  const ck = cacheKey(q, currentPage);
+  const cached = fromCache(ck);
+
+  if(cached){
+    updateResultsInfo(cached.count);
+    renderBooks(cached.items, area);
+    renderPagination(cached.count);
+    return;
+  }
+
+  showSkeletons(area);
+
   const params = new URLSearchParams({
     q,
     maxResults: PER_PAGE,
     startIndex: (currentPage-1)*PER_PAGE,
-    filter: 'free-ebooks',
     printType: 'books',
     orderBy: 'relevance'
   });
 
   try{
     const controller = new AbortController();
-    const timer = setTimeout(()=>controller.abort(), 15000);
+    const timer = setTimeout(()=>controller.abort(), 12000);
     const res = await fetch(`${API}?${params}`, {signal: controller.signal});
     clearTimeout(timer);
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
-    const count = Math.min(data.totalItems||0, 1000); // Google caps at 1000
+    const count = Math.min(data.totalItems||0, 1000);
     totalCount = count;
+    const items = data.items || [];
+    toCache(ck, {count, items});
     updateResultsInfo(count);
-    renderBooks(data.items || [], area);
+    renderBooks(items, area);
     renderPagination(count);
   }catch(err){
     const isTimeout = err.name==='AbortError';
